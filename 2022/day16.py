@@ -104,10 +104,10 @@ class Puzzle:
         logger.debug("valves_with_pressure %s", self.valves_with_pressure)
 
     def depth_first_search(self,
-                                 current_valve: str,
-                                 prev_actions: list,
-                                 prev_time_left: int,
-                                 valves_to_visit: list):
+                           current_valve: str,
+                           prev_actions: list,
+                           prev_time_left: int,
+                           valves_to_visit: list):
         actions = []
         next_search_flag = False
 
@@ -170,6 +170,63 @@ class Puzzle:
                 self.max_pressure = max(self.max_pressure, pressure)
             self.q.task_done()
             flag_exit_loop = is_last
+        return
+
+    def compute_most_pressure_with_elephant(self):
+        # Turn-on the worker thread.
+        task = threading.Thread(target=self.pressure_calculator_worker_with_elephant, daemon=True)
+        task.start()
+
+        origin = 'AA'
+        self.depth_first_search(origin, [], 26, self.valves_with_pressure)
+
+        # last msg
+        result = (True, [])
+        self.q.put(result)
+
+        # wait end task
+        task.join()
+        logger.info("most pressure: %s", self.max_pressure)
+        return self.max_pressure
+
+    def compute_pressure_step_by_step(self, actions, max_pressure_per_combination):
+        # if  actions path is [JJ,HH,EE,DD] then we compute pressure for
+        # [JJ,HH,EE,DD]
+        # [JJ,HH,EE]
+        # [JJ,HH]
+        # [JJ]
+        # and we put result in a map
+        while actions:
+            pressure = self.compute_pressure(actions, self.volcano)
+            # use frozenset as key of a map to store the max pressure of any combination of valve
+            # frozenset is immutable so you can use it as a key for a map
+            # the max pressure between path [F,J,K] or [K,J,F] is store in a map max_pressure_per_combination[{F,J,K}]
+            valves_combination_key = frozenset(map(lambda action: action.valve_name, actions))
+            prev_max_pressure = max_pressure_per_combination.get(valves_combination_key)
+            prev_max_pressure = prev_max_pressure if prev_max_pressure is not None else 0
+            max_pressure_per_combination[valves_combination_key] = max(prev_max_pressure, pressure)
+            # delete last action
+            actions.pop()
+
+    def pressure_calculator_worker_with_elephant(self):
+        max_pressure_per_combination = {}
+        flag_exit_loop = False
+        while not flag_exit_loop:
+            is_last, actions = self.q.get()
+            # logger.debug("compute max pressure for %s %s", is_last, list(map(lambda a: a.valve_name, actions)))
+            if not is_last:
+                self.compute_pressure_step_by_step(actions, max_pressure_per_combination)
+            self.q.task_done()
+            flag_exit_loop = is_last
+        # we want 2 set of data with no common valves, one set for me and one set for the elephant
+        for set1 in max_pressure_per_combination.keys():
+            for set2 in max_pressure_per_combination.keys():
+                # intersect. don't want any valve in common
+                intersect = set1 & set2
+                if len(intersect) == 0:
+                    pressure = max_pressure_per_combination[set1] + max_pressure_per_combination[set2]
+                    self.max_pressure = max(self.max_pressure, pressure)
+        return
 
 
 class TestUtils:
@@ -189,20 +246,41 @@ if __name__ == '__main__':
     INPUT_FILE_EXAMPLE = os.path.join(TEST_DATA_DIR, 'day16', 'example.txt')
     INPUT_FILE = os.path.join(TEST_DATA_DIR, 'day16', 'input.txt')
 
-    # part 1
-    print("part 1: input file is ", INPUT_FILE_EXAMPLE)
+    print("-----------------")
+    input_file = INPUT_FILE_EXAMPLE
+    print("part 1: input file is ", input_file)
     start = time.time()
-    puzzle_test = Puzzle(INPUT_FILE_EXAMPLE)
+    puzzle_test = Puzzle(input_file)
     most_pressure = TestUtils.check_result("part1", 1651, puzzle_test.compute_most_pressure)
     print("part 1: execution time is ", time.time() - start, " s")
     print("part 1: the most pressure, I can release, is ", most_pressure)
 
-    print("part 1: input file is ", INPUT_FILE)
+    print("-----------------")
+    input_file = INPUT_FILE
+    print("part 1: input file is ", input_file)
     start = time.time()
-    puzzle_non_reg = Puzzle(INPUT_FILE)
-    most_pressure = TestUtils.check_result("part1", 1584, puzzle_non_reg.compute_most_pressure)
+    puzzle_part1 = Puzzle(input_file)
+    most_pressure = TestUtils.check_result("part1", 1584, puzzle_part1.compute_most_pressure)
     print("part 1: execution time is ", time.time() - start, " s")
     print("part 1: the most pressure, I can release, is ", most_pressure)
+
+    print("-----------------")
+    input_file = INPUT_FILE_EXAMPLE
+    print("part 2: input file is ", input_file)
+    start = time.time()
+    puzzle_test_part2 = Puzzle(input_file)
+    most_pressure = TestUtils.check_result("part2", 1707, puzzle_test_part2.compute_most_pressure_with_elephant)
+    print("part 2: execution time is ", time.time() - start, " s")
+    print("part 2: the most pressure, I can release with elephant, is ", most_pressure)
+
+    print("-----------------")
+    input_file = INPUT_FILE
+    print("part 2: input file is ", input_file)
+    start = time.time()
+    puzzle_part2 = Puzzle(input_file)
+    most_pressure = TestUtils.check_result("part2", 2052, puzzle_part2.compute_most_pressure_with_elephant)
+    print("part 2: execution time is ", time.time() - start, " s")
+    print("part 2: the most pressure, I can release with elephant, is ", most_pressure)
 
 # puzzle = Puzzle(INPUT_FILE)
 # most_pressure = puzzle.compute_most_pressure()
