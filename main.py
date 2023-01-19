@@ -13,18 +13,6 @@ def print_hi(name):
 if __name__ == '__main__':
     print_hi('PyCharm')
 
-    toto = 5
-    titi = 'je suis une chaine'
 
-    tata = toto.__float__()
-
-    titi_splitted = titi.split(' ');
-
-   # tutu = titi + toto
-
-    print(titi)
-    print(toto)
-    print(tata)
-    print(titi_splitted)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
