@@ -75,7 +75,7 @@ class DistanceMatrix:
                     depth.append(next_depth)
 
 
-class Puzzle:
+class PressureCalculator:
 
     @staticmethod
     def to_valves(file):
@@ -143,13 +143,13 @@ class Puzzle:
             pressure = pressure + action.time_left * valve.rate
         return pressure
 
-    def compute_most_pressure(self):
+    def compute_most_pressure(self, time_left: int):
         # Turn-on the worker thread.
         task = threading.Thread(target=self.pressure_calculator_worker, daemon=True)
         task.start()
 
         origin = 'AA'
-        self.depth_first_search(origin, [], 30, self.valves_with_pressure)
+        self.depth_first_search(origin, [], time_left, self.valves_with_pressure)
 
         # last msg
         result = (True, [])
@@ -172,43 +172,10 @@ class Puzzle:
             flag_exit_loop = is_last
         return
 
-    def compute_most_pressure_with_elephant(self):
-        # Turn-on the worker thread.
-        task = threading.Thread(target=self.pressure_calculator_worker_with_elephant, daemon=True)
-        task.start()
 
-        origin = 'AA'
-        self.depth_first_search(origin, [], 26, self.valves_with_pressure)
+class PressureCalculatorWithElephant(PressureCalculator):
 
-        # last msg
-        result = (True, [])
-        self.q.put(result)
-
-        # wait end task
-        task.join()
-        logger.info("most pressure: %s", self.max_pressure)
-        return self.max_pressure
-
-    def compute_pressure_step_by_step(self, actions, max_pressure_per_combination):
-        # if  actions path is [JJ,HH,EE,DD] then we compute pressure for
-        # [JJ,HH,EE,DD]
-        # [JJ,HH,EE]
-        # [JJ,HH]
-        # [JJ]
-        # and we put result in a map
-        while actions:
-            pressure = self.compute_pressure(actions, self.volcano)
-            # use frozenset as key of a map to store the max pressure of any combination of valve
-            # frozenset is immutable so you can use it as a key for a map
-            # the max pressure between path [F,J,K] or [K,J,F] is store in a map max_pressure_per_combination[{F,J,K}]
-            valves_combination_key = frozenset(map(lambda action: action.valve_name, actions))
-            prev_max_pressure = max_pressure_per_combination.get(valves_combination_key)
-            prev_max_pressure = prev_max_pressure if prev_max_pressure is not None else 0
-            max_pressure_per_combination[valves_combination_key] = max(prev_max_pressure, pressure)
-            # delete last action
-            actions.pop()
-
-    def pressure_calculator_worker_with_elephant(self):
+    def pressure_calculator_worker(self):
         max_pressure_per_combination = {}
         flag_exit_loop = False
         while not flag_exit_loop:
@@ -228,12 +195,31 @@ class Puzzle:
                     self.max_pressure = max(self.max_pressure, pressure)
         return
 
+    def compute_pressure_step_by_step(self, actions, max_pressure_per_combination):
+        # if  actions path is [JJ,HH,EE,DD] then we compute pressure for
+        # [JJ,HH,EE,DD]
+        # [JJ,HH,EE]
+        # [JJ,HH]
+        # [JJ]
+        # and we put result in a map .
+        while actions:
+            pressure = self.compute_pressure(actions, self.volcano)
+            # use frozenset as key of a map to store the max pressure of any combination of valve
+            # frozenset is immutable, so you can use it as a key for a map
+            # the max pressure between path [F,J,K] or [K,J,F] is store in a map max_pressure_per_combination[{F,J,K}]
+            valves_combination_key = frozenset(map(lambda action: action.valve_name, actions))
+            prev_max_pressure = max_pressure_per_combination.get(valves_combination_key)
+            prev_max_pressure = prev_max_pressure if prev_max_pressure is not None else 0
+            max_pressure_per_combination[valves_combination_key] = max(prev_max_pressure, pressure)
+            # delete last action
+            actions.pop()
+
 
 class TestUtils:
 
     @staticmethod
-    def check_result(test_name: str, expected_result: int, method_to_check):
-        current_result = method_to_check()
+    def check_result(test_name: str, expected_result: int, method_to_check, argv):
+        current_result = method_to_check(argv)
         assert current_result == expected_result, test_name + ': ' + '(current_result:' + str(
             current_result) + ') != (expected_result:' + str(expected_result) + ')'
         return current_result
@@ -250,8 +236,8 @@ if __name__ == '__main__':
     input_file = INPUT_FILE_EXAMPLE
     print("part 1: input file is ", input_file)
     start = time.time()
-    puzzle_test = Puzzle(input_file)
-    most_pressure = TestUtils.check_result("part1", 1651, puzzle_test.compute_most_pressure)
+    puzzle = PressureCalculator(input_file)
+    most_pressure = TestUtils.check_result("part1", 1651, puzzle.compute_most_pressure, 30)
     print("part 1: execution time is ", time.time() - start, " s")
     print("part 1: the most pressure, I can release, is ", most_pressure)
 
@@ -259,8 +245,8 @@ if __name__ == '__main__':
     input_file = INPUT_FILE
     print("part 1: input file is ", input_file)
     start = time.time()
-    puzzle_part1 = Puzzle(input_file)
-    most_pressure = TestUtils.check_result("part1", 1584, puzzle_part1.compute_most_pressure)
+    puzzle = PressureCalculator(input_file)
+    most_pressure = TestUtils.check_result("part1", 1584, puzzle.compute_most_pressure, 30)
     print("part 1: execution time is ", time.time() - start, " s")
     print("part 1: the most pressure, I can release, is ", most_pressure)
 
@@ -268,8 +254,8 @@ if __name__ == '__main__':
     input_file = INPUT_FILE_EXAMPLE
     print("part 2: input file is ", input_file)
     start = time.time()
-    puzzle_test_part2 = Puzzle(input_file)
-    most_pressure = TestUtils.check_result("part2", 1707, puzzle_test_part2.compute_most_pressure_with_elephant)
+    puzzle = PressureCalculatorWithElephant(input_file)
+    most_pressure = TestUtils.check_result("part2", 1707, puzzle.compute_most_pressure, 26)
     print("part 2: execution time is ", time.time() - start, " s")
     print("part 2: the most pressure, I can release with elephant, is ", most_pressure)
 
@@ -277,19 +263,10 @@ if __name__ == '__main__':
     input_file = INPUT_FILE
     print("part 2: input file is ", input_file)
     start = time.time()
-    puzzle_part2 = Puzzle(input_file)
-    most_pressure = TestUtils.check_result("part2", 2052, puzzle_part2.compute_most_pressure_with_elephant)
+    puzzle = PressureCalculatorWithElephant(input_file)
+    most_pressure = TestUtils.check_result("part2", 2052, puzzle.compute_most_pressure, 26)
     print("part 2: execution time is ", time.time() - start, " s")
     print("part 2: the most pressure, I can release with elephant, is ", most_pressure)
 
-# puzzle = Puzzle(INPUT_FILE)
-# most_pressure = puzzle.compute_most_pressure()
-# print("part 1 : the most pressure, I can release is ", most_pressure)
-
-# part 2
-# puzzle_test.part2_test(29)
-
-# nb_fewest_steps_from_any_a_elevation = puzzle.compute_nb_fewest_steps_from_any_a_elevation()
-# print("part 2 : the fewest steps from any 'a' elevation to 'E' is ", nb_fewest_steps_from_any_a_elevation)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
