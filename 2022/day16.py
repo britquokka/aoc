@@ -4,7 +4,7 @@ import queue
 import threading
 
 import time
-# from itertools import permutations
+from itertools import combinations
 
 TEST_DATA_DIR = os.path.join(os.getcwd(), 'data')
 
@@ -185,34 +185,31 @@ class PressureCalculatorWithElephant(PressureCalculator):
                 self.compute_pressure_step_by_step(actions, max_pressure_per_combination)
             self.q.task_done()
             flag_exit_loop = is_last
-        # we want 2 set of data with no common valves, one set for me and one set for the elephant
-        for set1 in max_pressure_per_combination.keys():
-            for set2 in max_pressure_per_combination.keys():
-                # intersect. don't want any valve in common
-                intersect = set1 & set2
-                if len(intersect) == 0:
-                    pressure = max_pressure_per_combination[set1] + max_pressure_per_combination[set2]
-                    self.max_pressure = max(self.max_pressure, pressure)
+        # we want 2 sets of data with no common valves, one set for me and one set for the elephant
+        for set1, set2 in combinations(max_pressure_per_combination.keys(), 2):
+            intersect = set1 & set2
+            if len(intersect) == 0:
+                pressure = max_pressure_per_combination[set1] + max_pressure_per_combination[set2]
+                self.max_pressure = max(self.max_pressure, pressure)
         return
 
     def compute_pressure_step_by_step(self, actions, max_pressure_per_combination):
         # if  actions path is [JJ,HH,EE,DD] then we compute pressure for
-        # [JJ,HH,EE,DD]
-        # [JJ,HH,EE]
-        # [JJ,HH]
         # [JJ]
+        # [JJ,HH]
+        # [JJ,HH,EE]
+        # [JJ,HH,EE,DD]
         # and we put result in a map .
-        while actions:
-            pressure = self.compute_pressure(actions, self.volcano)
-            # use frozenset as key of a map to store the max pressure of any combination of valve
-            # frozenset is immutable, so you can use it as a key for a map
-            # the max pressure between path [F,J,K] or [K,J,F] is store in a map max_pressure_per_combination[{F,J,K}]
-            valves_combination_key = frozenset(map(lambda action: action.valve_name, actions))
-            prev_max_pressure = max_pressure_per_combination.get(valves_combination_key)
-            prev_max_pressure = prev_max_pressure if prev_max_pressure is not None else 0
+        pressure = 0
+        step_by_step = []
+        for action in actions:
+            step_by_step.append(action)
+            valve = self.volcano.get_valve_by_name(action.valve_name)
+            pressure = pressure + action.time_left * valve.rate
+            valves_combination_key = frozenset(map(lambda v: v.valve_name, step_by_step))
+            prev_max_pressure = max_pressure_per_combination.get(valves_combination_key, 0)
             max_pressure_per_combination[valves_combination_key] = max(prev_max_pressure, pressure)
-            # delete last action
-            actions.pop()
+        return pressure
 
 
 class TestUtils:
