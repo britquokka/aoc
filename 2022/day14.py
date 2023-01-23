@@ -17,18 +17,11 @@ class Cave:
     def set_rock_line(self, begin, end):
         x1, y1 = begin
         x2, y2 = end
-        # down
-        if x1 == x2:
-            y1, y2 = (y1, y2) if y1 < y2 else (y2, y1)
-            for j in range(y1, y2 + 1):
-                self.occupied_map[x1][j] = 1
-                logger.debug("rock:%s", (x1, j))
-        # right or left
-        elif y1 == y2:
-            x1, x2 = (x1, x2) if x1 < x2 else (x2, x1)
+        y1, y2 = sorted([y1, y2])
+        x1, x2 = sorted([x1, x2])
+        for j in range(y1, y2 + 1):
             for i in range(x1, x2 + 1):
-                self.occupied_map[i][y1] = 1
-                logger.debug("rock:%s", (i, y1))
+                self.occupied_map[i][j] = 1
 
     def is_free_point(self, point):
         x2, y2 = self.highest_point
@@ -42,7 +35,7 @@ class Cave:
         x, y = point
         self.occupied_map[x][y] = 1
 
-    def set_bottom_point_if_needed(self, point):
+    def set_highest_point_if_needed(self, point):
         x1, y1 = self.highest_point
         x2, y2 = point
         self.highest_point = point if y1 < y2 else self.highest_point
@@ -62,37 +55,31 @@ class Puzzle:
             for line in f:
                 rock_nodes = list(line.strip().split(' -> '))
                 logger.info(rock_nodes)
-                prev_point = (0, 0)
+                prev_point = None
                 for rock_node in rock_nodes:
                     cur_point = tuple(map(lambda a: int(a), rock_node.split(',')))
-                    cave.set_bottom_point_if_needed(cur_point)
-                    cave.set_rock_line(prev_point, cur_point)
+                    cave.set_highest_point_if_needed(cur_point)
+                    if prev_point is not None:
+                        cave.set_rock_line(prev_point, cur_point)
                     prev_point = cur_point
         return cave
 
     def __init__(self, file):
         self.cave = self.to_2d_cave(file)
         logger.info("cave: %s", self.cave)
-        logger.info("bottom point:%s", self.cave.highest_point)
+        logger.info("highest point:%s", self.cave.highest_point)
 
     def get_next_destination(self, point):
-        flag_exit_loop = False
         result = None
         x, y = point
         down = x, y+1
         left = x-1, y+1
         right = x+1, y+1
         destinations = [down, left, right]
-        i = 0
-        nb_dst = len(destinations)
-        while not flag_exit_loop:
-            destination = destinations[i]
-            i = i + 1
+        for destination in destinations:
             if self.cave.is_free_point(destination):
                 result = destination
-                flag_exit_loop = True
-            elif i == nb_dst:
-                flag_exit_loop = True
+                break
         return result
 
     def compute_nb_units_of_sand(self, with_floor=False):
