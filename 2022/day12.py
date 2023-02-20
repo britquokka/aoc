@@ -1,6 +1,7 @@
 import logging
 import os
 
+
 TEST_DATA_DIR = os.path.join(os.getcwd(), 'data')
 
 logger = logging.getLogger(__name__)
@@ -8,32 +9,27 @@ logger = logging.getLogger(__name__)
 
 class HillGraph:
 
-    def build_id(self, i, j):
-        return i * self.id_column_factor + j
-
     @staticmethod
     def conv(elevation):
         result = 'a' if elevation == 'S' else elevation
         result = 'z' if result == 'E' else result
         return result
 
-    def is_inside_map(self, coord):
-        i, j = coord
-        flag_row = (0 <= i < self.nb_rows)
-        flag_column = (0 <= j < self.nb_columns)
-        return flag_column and flag_row
+    def is_inside_map(self, point):
+        x, y = point
+        return True if (0 <= x < self.max_x) and (0 <= y < self.max_y) else False
 
-    def build_neighbours(self, i, j):
+    def build_neighbours(self, point):
+        x, y = point
         neighbours = []
-        neighbours_coord = [[i - 1, j], [i, j - 1], [i, j + 1], [i + 1, j]]
-        neighbours_coord_filtered = filter(lambda pos: self.is_inside_map(pos), neighbours_coord)
-        elevation = HillGraph.conv(self.squares[i][j])
-        for coord in neighbours_coord_filtered:
-            x, y = coord
+        all_neighbours = [[x - 1, y], [x, y - 1], [x, y + 1], [x + 1, y]]
+        inside_neighbours = filter(lambda pos: self.is_inside_map(pos), all_neighbours)
+        elevation = HillGraph.conv(self.squares[x][y])
+        for p in inside_neighbours:
+            x, y = p
             neighbour_elevation = HillGraph.conv(self.squares[x][y])
             if self.is_neighbour_predicate(neighbour_elevation, elevation):
-                key = self.build_id(x, y)
-                neighbours.append(key)
+                neighbours.append((x, y))
         return neighbours
 
     def __init__(self, squares, is_neighbour_predicate):
@@ -41,21 +37,20 @@ class HillGraph:
         self.start_node = None
         self.end_node = None
         self.elevation_a_nodes = []
-        self.nb_rows = len(squares)
-        self.nb_columns = len(squares[0])
-        self.id_column_factor = pow(10, len(str(self.nb_columns)))
+        self.max_x = len(squares)
+        self.max_y = len(squares[0])
         self.squares = squares
         self.is_neighbour_predicate = is_neighbour_predicate
-        for i in range(0, self.nb_rows):
-            for j in range(0, self.nb_columns):
-                key = self.build_id(i, j)
-                self.graph[key] = self.build_neighbours(i, j)
-                if squares[i][j] == 'S':
-                    self.start_node = key
-                elif squares[i][j] == 'E':
-                    self.end_node = key
-                elif squares[i][j] == 'a':
-                    self.elevation_a_nodes.append(key)
+        for x in range(0, self.max_x):
+            for y in range(0, self.max_y):
+                point = (x, y)
+                self.graph[point] = self.build_neighbours(point)
+                if squares[x][y] == 'S':
+                    self.start_node = point
+                elif squares[x][y] == 'E':
+                    self.end_node = point
+                elif squares[x][y] == 'a':
+                    self.elevation_a_nodes.append(point)
 
 
 class Puzzle:
@@ -91,7 +86,7 @@ class Puzzle:
                     queue.append(neighbour)
 
     @staticmethod
-    def find_steps( graph, start_node, end_nodes):
+    def find_steps(graph, start_node, end_nodes):
         parent_by_node = {}
         end_node = Puzzle.bfs(graph, parent_by_node, start_node, end_nodes)
         steps = []
