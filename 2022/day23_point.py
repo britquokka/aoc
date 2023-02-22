@@ -1,11 +1,22 @@
 import logging
 import os
 import time
-
+from dataclasses import dataclass
 
 TEST_DATA_DIR = os.path.join(os.getcwd(), 'data')
 
 logger = logging.getLogger(__name__)
+
+
+@dataclass(frozen=True)
+class Point:
+    x: int
+    y: int
+
+    def __add__(self, other):
+        x = self.x + other.x
+        y = self.y + other.y
+        return Point(x, y)
 
 
 class Direction:
@@ -25,7 +36,7 @@ class Puzzle:
                 tiles = line.strip()
                 for tile in tiles:
                     if tile == '#':
-                        elves[elf_id] = (x, y)
+                        elves[elf_id] = Point(x, y)
                         elf_id += 1
                     x += 1
                 y -= 1
@@ -36,47 +47,38 @@ class Puzzle:
         self.elves = self.to_elves(file)
         logger.debug(self.elves)
 
-    @staticmethod
-    def get_neighbours(coord, direction):
-        x, y = coord
-        if direction == Direction.NORTH:
-            neighbours = [(x - 1, y + 1), (x, y + 1), (x + 1, y + 1)]
-        elif direction == Direction.SOUTH:
-            neighbours = [(x - 1, y - 1), (x, y - 1), (x + 1, y - 1)]
-        elif direction == Direction.WEST:
-            neighbours = [(x - 1, y - 1), (x - 1, y), (x - 1, y + 1)]
-        else:
-            neighbours = [(x + 1, y + 1), (x + 1, y), (x + 1, y - 1)]
+    NEIGHBOUR_DELTAS = [[Point(-1, 1), Point(0, 1), Point(1, 1)],
+                        [Point(-1, -1), Point(0, -1), Point(1, -1)],
+                        [Point(-1, -1), Point(-1, 0), Point(-1, 1)],
+                        [Point(1, 1), Point(1, 0), Point(1, -1)]]
 
-        return set(neighbours)
+    MOVE_DELTA = [Point(0, 1), Point(0, -1), Point(-1, 0), Point(1, 0)]
 
     @staticmethod
-    def move(coord, direction):
-        x, y = coord
-        if direction == Direction.NORTH:
-            next_p = (x, y + 1)
-        elif direction == Direction.SOUTH:
-            next_p = (x, y - 1)
-        elif direction == Direction.WEST:
-            next_p = (x - 1, y)
-        else:
-            next_p = (x + 1, y)
+    def get_neighbours(point, direction):
+        neighbours = set()
+        for delta in Puzzle.NEIGHBOUR_DELTAS[direction]:
+            neighbours.add(delta + point)
+        return neighbours
 
+    @staticmethod
+    def move(point, direction):
+        next_p = point + Puzzle.MOVE_DELTA[direction]
         return next_p
 
     @staticmethod
-    def get_next_destination(coord, first_direction, elves_set):
-        dst = coord
+    def get_next_destination(point, first_direction, elves_set):
+        dst = point
         has_neighbour = False
         proposition = None
         # try to move N, S , W, E then modulo S, W, E, N ... modulo 4
         for i in range(0, 4):
             direction = (first_direction + i) % 4
-            neighbours = Puzzle.get_neighbours(coord, direction)
+            neighbours = Puzzle.get_neighbours(point, direction)
             occupied_tiles = neighbours.intersection(elves_set)
             if len(occupied_tiles) == 0:
                 if proposition is None:
-                    proposition = Puzzle.move(coord, direction)
+                    proposition = Puzzle.move(point, direction)
             else:
                 has_neighbour = True
 
@@ -87,16 +89,13 @@ class Puzzle:
 
     @staticmethod
     def get_min(p1, p2):
-        x1, y1 = p1
-        x2, y2 = p2
-        res = (min(x1, x2), min(y1, y2))
+
+        res = Point(min(p1.x, p2.x), min(p1.y, p2.y))
         return res
 
     @staticmethod
     def get_max(p1, p2):
-        x1, y1 = p1
-        x2, y2 = p2
-        res = (max(x1, x2), max(y1, y2))
+        res = Point(max(p1.x, p2.x), max(p1.y, p2.y))
         return res
 
     @staticmethod
@@ -109,7 +108,8 @@ class Puzzle:
     def move_all_elves(direction, elves, elves_set):
         elves_dst = {}
         elf_by_dst = {}
-        min_coord, max_coord = elves[0], elves[0]
+        min_coord = elves[0]
+        max_coord = elves[0]
         for elf_id, coord in elves.items():
             dst = Puzzle.get_next_destination(coord, direction, elves_set)
             # other elf want to go to the same dst
@@ -132,9 +132,7 @@ class Puzzle:
             self.elves, min_coord, max_coord = Puzzle.move_all_elves(direction, self.elves, elves_set)
             direction = (direction+1) % 4
 
-        x_min, y_min = min_coord
-        x_max, y_max = max_coord
-        nb_tiles = (x_max + 1 - x_min) * (y_max + 1 - y_min)
+        nb_tiles = (max_coord.x + 1 - min_coord.x) * (max_coord.y + 1 - min_coord.y)
         nb_empty_tiles = nb_tiles - len(self.elves.values())
         return nb_empty_tiles
 
