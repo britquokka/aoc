@@ -1,3 +1,4 @@
+import collections
 import logging
 import os
 import time
@@ -20,7 +21,7 @@ class Puzzle:
 
     def find_separator(self, nb_distinct_char):
         idx_after_sep = None
-        for i in range(1, len(self.datastream) - nb_distinct_char):
+        for i in range(0, len(self.datastream) - nb_distinct_char):
             extract = set(self.datastream[i:i+nb_distinct_char])
             if len(extract) == nb_distinct_char:
                 idx_after_sep = i + nb_distinct_char
