@@ -1,7 +1,6 @@
 import logging
 import os
 
-
 TEST_DATA_DIR = os.path.join(os.getcwd(), 'data')
 
 logger = logging.getLogger(__name__)
