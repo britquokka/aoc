@@ -85,9 +85,10 @@ class Puzzle:
         while delta > e:
             m = int((a + b) / 2)
             delta = abs(b - a)
-            if f(m) == 0:
+            res_f_m = f(m)
+            if res_f_m == 0:
                 return m
-            elif f(a) * f(m) > 0:
+            elif f(a) * res_f_m > 0:
                 a = m
             else:
                 b = m
@@ -171,6 +172,3 @@ if __name__ == '__main__':
     number = TestUtils.check_result("part2", 3441198826073, puzzle.find_number_to_yell)
     print("part 2: execution time is ", time.time() - start, " s")
     print("part 2: the number to yell, to pass root's equality test, is ", number)
-
-
-
