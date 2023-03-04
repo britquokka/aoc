@@ -31,15 +31,15 @@ class Game:
              (Shape.SCISSORS, Shape.PAPER): RoundOutcome.LOST,
              (Shape.SCISSORS, Shape.SCISSORS): RoundOutcome.DRAW}
     gain_by_shape = {Shape.ROCK: 1, Shape.PAPER: 2, Shape.SCISSORS: 3}
-    gain_by_round_result = {RoundOutcome.LOST: 0, RoundOutcome.DRAW: 3, RoundOutcome.WIN: 6}
+    gain_by_round_outcome = {RoundOutcome.LOST: 0, RoundOutcome.DRAW: 3, RoundOutcome.WIN: 6}
 
     def __init__(self):
         # retrieve my shape by round result
         self.my_shape_by_round_outcome = {}
         for key, value in self.rules.items():
             shapes = key
-            round_result = value
-            self.my_shape_by_round_outcome[(shapes[0], round_result)] = shapes[1]
+            round_outcome = value
+            self.my_shape_by_round_outcome[(shapes[0], round_outcome)] = shapes[1]
 
 
 class Puzzle:
@@ -59,14 +59,14 @@ class Puzzle:
         logger.debug(self.strategy_guide)
 
     def compute_round_score(self, opponent_shape, my_shape):
-        round_result = self.game.rules[(opponent_shape, my_shape)]
-        score = self.game.gain_by_round_result[round_result]
+        round_outcome = self.game.rules[(opponent_shape, my_shape)]
+        score = self.game.gain_by_round_outcome[round_outcome]
         shape_bonus = self.game.gain_by_shape[my_shape]
         return score + shape_bonus
 
     def compute_round_score_with_round_outcome(self, opponent_shape, round_outcome):
         my_shape = self.game.my_shape_by_round_outcome[(opponent_shape, round_outcome)]
-        score = self.game.gain_by_round_result[round_outcome]
+        score = self.game.gain_by_round_outcome[round_outcome]
         shape_bonus = self.game.gain_by_shape[my_shape]
         return score + shape_bonus
 
