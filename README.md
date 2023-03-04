@@ -94,6 +94,12 @@ my first [dichotomy][dichotomy] in Python
                 b = m
         return a, b
 ```
+
+### Day 6: Tuning Trouble
+
+### Day 2: Rock Paper Scissors
+
+
 [aoc-about]:   https://adventofcode.com/2022/about
 [composite design pattern]: https://refactoring.guru/design-patterns/composite/python/example#lang-features
 [graph]: https://zestedesavoir.com/tutoriels/681/a-la-decouverte-des-algorithmes-de-graphe/727_bases-de-la-theorie-des-graphes/3352_graphes-et-representation-de-graphe/
