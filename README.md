@@ -65,11 +65,11 @@ with a dict and a set
 ### Day 19: Not Enough Minerals
 DFS with a LIFO instead of a recursive call
 
-Use collections.deque() for LIFO or FIFO instead of queue (A multi-producer, multi-consumer queue).
+Use collections.deque() for LIFO or FIFO instead of queue module (A multi-producer, multi-consumer queue).
 
 Collections.dequeue are 20% faster than queue. 
 
-Queue are thread-safe and shall be reserved to multi-thread communication. 
+Queues (from queue module) are thread-safe and shall be reserved to multi-thread communication. 
 
 I made two solutions for day 19 : one with dataclasses and add and sub methods overloading
 and the other with direct integer manipulation
@@ -98,6 +98,12 @@ my first [dichotomy][dichotomy] in Python
 ### Day 6: Tuning Trouble
 
 ### Day 2: Rock Paper Scissors
+
+### Day 3: Rucksack Reorganization
+set and list slicing practical work
+
+### Day 5: Supply Stacks
+collections.deque() practical work
 
 
 [aoc-about]:   https://adventofcode.com/2022/about
