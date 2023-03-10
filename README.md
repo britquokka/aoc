@@ -105,6 +105,9 @@ set and list slicing practical work
 ### Day 5: Supply Stacks
 collections.deque() practical work
 
+### Day 8: Treetop Tree House
+list search by decrementing with range 
+
 
 [aoc-about]:   https://adventofcode.com/2022/about
 [composite design pattern]: https://refactoring.guru/design-patterns/composite/python/example#lang-features
