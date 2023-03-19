@@ -108,6 +108,13 @@ collections.deque() practical work
 ### Day 8: Treetop Tree House
 list search by decrementing with range 
 
+### Day 9: Rope Bridge
+Initialize a list of tuple using the * operator
+```
+knots = [(0, 0)] * nb_knots
+```
+
+
 
 [aoc-about]:   https://adventofcode.com/2022/about
 [composite design pattern]: https://refactoring.guru/design-patterns/composite/python/example#lang-features
