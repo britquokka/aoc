@@ -114,6 +114,8 @@ Initialize a list of tuple using the * operator
 knots = [(0, 0)] * nb_knots
 ```
 
+### Day 10: Cathode-Ray Tube
+
 
 
 [aoc-about]:   https://adventofcode.com/2022/about
