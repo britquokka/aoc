@@ -3,6 +3,7 @@
 ### Day 1: Day 1: Trebuchet?! 
 There are several ways to find a digit in a string.
 
+
 You can use List comprehension. It offers a shorter syntax when you want to create a new list based on the values of an existing list
 ```
 text="3cf4kbkclqfourseven4"           
