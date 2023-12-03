@@ -63,9 +63,9 @@ class Puzzle:
     def power_and_sum_minimum_set(self):
         minimum_set_sum = 0
         for game_id, subsets in self.subsets_by_game.items():
-            blue, green, red = 0, 0, 0
+            blue, green, red = subsets[0]
             # find the fewest number of cubes of each color that could have been in the bag to make the game possible
-            for subset in subsets:
+            for subset in subsets[1:]:
                 blue, green, red = max(blue, subset[0]), max(green, subset[1]), max(red, subset[2])
             power = blue * green * red
             minimum_set_sum = minimum_set_sum + power
