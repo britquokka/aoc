@@ -43,10 +43,10 @@ class Puzzle:
         counters = [1] * len(self.numbers_by_card.keys())
         for card_id, (winning_numbers, numbers_you_have) in self.numbers_by_card.items():
             nb_winning_numbers = len(numbers_you_have & winning_numbers)
-            idx_cnt = card_id - 1
             if nb_winning_numbers > 0:
-                for i in range(idx_cnt+1, idx_cnt+1+nb_winning_numbers):
-                    counters[i] = counters[i] + counters[idx_cnt]
+                counter = counters[card_id - 1]
+                for i in range(card_id, card_id+nb_winning_numbers):
+                    counters[i] += counter
 
         return sum(counters)
 
