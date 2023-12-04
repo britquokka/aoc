@@ -7,9 +7,8 @@ logger = logging.getLogger(__name__)
 
 
 class Puzzle:
-    digit_by_text = dict(twone="2", eightwo="8", eighthree="8", oneight="1", threeight="3", fiveight="5", nineight="9",
-                         sevenine="7", one="1", two="2", three="3", four="4", five="5", six="6", seven="7", eight="8",
-                         nine="9")
+    digit_by_text = dict(one="o1e", two="t2o", three="t3e", four="f4r", five="f5e", six="s6x", seven="s7n", eight="e8t",
+                         nine="n9e")
 
     @staticmethod
     def convert_text_to_digit(text: str) -> str:
