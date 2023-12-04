@@ -17,4 +17,16 @@ digits = list(filter(lambda c: c.isdigit(), text))
 
 ### Day 2: Cube Conundrum
 
+###  Day 4: Scratchcards
+Set intersection with intersection method
+```
+set1 = {2, 3, 5}
+set2 = {1, 3, 5}
+new_set = set1.intersection(set2)
+```
+or with & operator
+```
+new_set = set1 & set2
+```
+
 [aoc-about]:   https://adventofcode.com/2023/about
