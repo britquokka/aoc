@@ -98,7 +98,7 @@ if __name__ == '__main__':
     print("part 2: input file is ", input_file)
     start = time.time()
     puzzle = Puzzle(input_file)
-    nb_cards = TestUtils.check_result_no_arg("part1", 30, puzzle.compute_nb_cards)
+    nb_cards = TestUtils.check_result_no_arg("part2", 30, puzzle.compute_nb_cards)
     print("part 2: execution time is ", time.time() - start, " s")
     print("part 2: The total number of scratchcards is ", nb_cards)
 
@@ -107,6 +107,6 @@ if __name__ == '__main__':
     print("part 2: input file is ", input_file)
     start = time.time()
     puzzle = Puzzle(input_file)
-    nb_cards = TestUtils.check_result_no_arg("part1", 8477787, puzzle.compute_nb_cards)
+    nb_cards = TestUtils.check_result_no_arg("part2", 8477787, puzzle.compute_nb_cards)
     print("part 2: execution time is ", time.time() - start, " s")
     print("part 2: The total number of scratchcards is ", nb_cards)
