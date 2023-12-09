@@ -33,7 +33,8 @@ new_set = set1 & set2
 
 
 ### Day 6: Wait For It
-Find roots in a [quadratic polynomial][fonction du second degre]
+Find roots in a [quadratic polynomial][quadratic polynomial]]
 
 [aoc-about]:   https://adventofcode.com/2023/about
 [fonction du second degre]: https://campussaintjean.be/IMG/pdf/chapitre_3_la_fonction_du_second_degre_1_.pdf
+[quadratic polynomial]: https://www.cuemath.com/algebra/roots-of-quadratic-equation/
