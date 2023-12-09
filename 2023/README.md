@@ -29,4 +29,11 @@ or with & operator
 new_set = set1 & set2
 ```
 
+### Day 5: If You Give A Seed A Fertilizer
+
+
+### Day 6: Wait For It
+Find roots in a [quadratic polynomial][fonction du second degre]
+
 [aoc-about]:   https://adventofcode.com/2023/about
+[fonction du second degre]: https://campussaintjean.be/IMG/pdf/chapitre_3_la_fonction_du_second_degre_1_.pdf

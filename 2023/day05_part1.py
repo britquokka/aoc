@@ -1,4 +1,6 @@
 from dataclasses import dataclass
+from TestUtils import TestUtils
+
 
 import logging
 import os
@@ -90,23 +92,6 @@ class Puzzle:
     def find_lowest_location(self):
         locations = self.almanac.find_locations(self.almanac.seed_numbers)
         return min(locations)
-
-
-class TestUtils:
-
-    @staticmethod
-    def check_result(test_name: str, expected_result: int, method_to_check, argv):
-        current_result = method_to_check(argv)
-        assert current_result == expected_result, test_name + ': ' + '(current_result:' + str(
-            current_result) + ') != (expected_result:' + str(expected_result) + ')'
-        return current_result
-
-    @staticmethod
-    def check_result_no_arg(test_name: str, expected_result: int, method_to_check):
-        current_result = method_to_check()
-        assert current_result == expected_result, test_name + ': ' + '(current_result:' + str(
-            current_result) + ') != (expected_result:' + str(expected_result) + ')'
-        return current_result
 
 
 # Press the green button in the gutter to run the script.

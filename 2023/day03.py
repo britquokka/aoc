@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-
+from TestUtils import TestUtils
 import logging
 import os
 import time
@@ -13,6 +13,42 @@ class EngineSchematic:
     digit_coords: set
     symbol_coords: set
     asterisk_coords: set
+
+    def find_gears(self):
+        gears = []
+        # find digit around * symbol
+        for asterisk_coord in self.asterisk_coords:
+            neighbours = EngineSchematic.get_neighbours(asterisk_coord)
+            adjacent_digit_coords = neighbours & self.digit_coords
+            gear_part_candidates = set()
+            for adjacent_digit_coord in adjacent_digit_coords:
+                gear_part_candidates.add(self.part_by_coord[adjacent_digit_coord])
+            # A gear is any * symbol that is adjacent to exactly two part numbers
+            if len(gear_part_candidates) == 2:
+                gears.append(gear_part_candidates)
+
+        return gears
+
+    @staticmethod
+    def get_neighbours(coord: tuple):
+        (y, x) = coord
+        neighbours = [(y - 1, x - 1), (y - 1, x), (y - 1, x + 1), (y, x - 1), (y, x + 1), (y + 1, x - 1), (y + 1, x),
+                      (y + 1, x + 1)]
+        return set(neighbours)
+
+    def find_part_numbers(self):
+        # find digit around symbols
+        adjacent_digit_coords = []
+        for symbol_coord in self.symbol_coords:
+            neighbours = EngineSchematic.get_neighbours(symbol_coord)
+            adjacent_digit_coords.extend(neighbours & self.digit_coords)
+
+        # retrieve adjacent engine part number with its coordinate in the schematic
+        # part numbers are stored in a dict at several position so use a "set" to count it only once
+        part_numbers = set()
+        for adjacent_digit_coord in adjacent_digit_coords:
+            part_numbers.add(self.part_by_coord[adjacent_digit_coord])
+        return part_numbers
 
 
 @dataclass(frozen=True)
@@ -68,65 +104,12 @@ class Puzzle:
         self.schematic = self.to_engine_schematic(file)
         logger.info(self.schematic)
 
-    @staticmethod
-    def get_neighbours(coord: tuple):
-        (y, x) = coord
-        neighbours = [(y-1, x-1), (y-1, x), (y-1, x+1), (y, x-1), (y, x+1), (y+1, x-1), (y+1, x), (y+1, x+1)]
-        return set(neighbours)
-
-    def find_part_numbers(self):
-        # find digit around symbols
-        adjacent_digit_coords = []
-        for symbol_coord in self.schematic.symbol_coords:
-            neighbours = Puzzle.get_neighbours(symbol_coord)
-            adjacent_digit_coords.extend(neighbours & self.schematic.digit_coords)
-
-        # retrieve adjacent engine part number with its coordinate in the schematic
-        # part numbers are stored in a dict at several position so use a "set" to count it only once
-        part_numbers = set()
-        for adjacent_digit_coord in adjacent_digit_coords:
-            part_numbers.add(self.schematic.part_by_coord[adjacent_digit_coord])
-        return part_numbers
-
     def find_and_sum_part_numbers(self):
-        return sum(self.find_part_numbers())
-
-    def find_gears(self):
-        gears = []
-        # find digit around * symbol
-        for asterisk_coord in self.schematic.asterisk_coords:
-            neighbours = Puzzle.get_neighbours(asterisk_coord)
-            adjacent_digit_coords = neighbours & self.schematic.digit_coords
-            gear_part_candidates = set()
-            for adjacent_digit_coord in adjacent_digit_coords:
-                gear_part_candidates.add(self.schematic.part_by_coord[adjacent_digit_coord])
-            # A gear is any * symbol that is adjacent to exactly two part numbers
-            if len(gear_part_candidates) == 2:
-                gears.append(gear_part_candidates)
-
-        return gears
+        return sum(self.schematic.find_part_numbers())
 
     def find_and_sum_gear_ratios(self):
-        gears = self.find_gears()
+        gears = self.schematic.find_gears()
         return sum([(part1.part_number * part2.part_number) for part1, part2 in gears])
-
-
-
-class TestUtils:
-
-    @staticmethod
-    def check_result(test_name: str, expected_result: int, method_to_check, argv):
-        current_result = method_to_check(argv)
-        assert current_result == expected_result, test_name + ': ' + '(current_result:' + str(
-            current_result) + ') != (expected_result:' + str(expected_result) + ')'
-        return current_result
-
-    @staticmethod
-    def check_result_no_arg(test_name: str, expected_result: int, method_to_check):
-        current_result = method_to_check()
-        assert current_result == expected_result, test_name + ': ' + '(current_result:' + str(
-            current_result) + ') != (expected_result:' + str(expected_result) + ')'
-        return current_result
 
 
 # Press the green button in the gutter to run the script.
