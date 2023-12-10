@@ -40,7 +40,7 @@ class Puzzle:
         # if wait_time = w = 2 then f(2) = 0 and f(3) = 2
         # or f(w) = 0 and f(w+1) = w
         # a*w +b = 0 ==> b = -a*w
-        # a*(w+1) +b = w == > a = w
+        # a*(w+1) +b = w ==> a = w
         # f(t) = w*t - w^2
         # now w is the variable and T and D fix
         # f(x) = T*x - x^2

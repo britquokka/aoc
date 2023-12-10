@@ -30,6 +30,15 @@ new_set = set1 & set2
 ```
 
 ### Day 5: If You Give A Seed A Fertilizer
+[Array bisection algorithm][bisect] to find insertion point in a list or interval.
+
+Use it to optimize map lookup
+```
+a_list = [1,3,5,7,10,25,49,55]
+new_item = 25
+idx = bisect.bisect_right(nums, new_item)
+```
+Result is idx=6
 
 
 ### Day 6: Wait For It
@@ -38,3 +47,5 @@ Find roots in a [quadratic polynomial][quadratic polynomial]]
 [aoc-about]:   https://adventofcode.com/2023/about
 [fonction du second degre]: https://campussaintjean.be/IMG/pdf/chapitre_3_la_fonction_du_second_degre_1_.pdf
 [quadratic polynomial]: https://www.cuemath.com/algebra/roots-of-quadratic-equation/
+[bisect]: https://docs.python.org/3/library/bisect.html
+[bisect_right]: https://www.educative.io/answers/what-is-bisectbisectright-in-python
