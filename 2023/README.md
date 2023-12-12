@@ -44,6 +44,18 @@ Result is idx=6
 ### Day 6: Wait For It
 Find roots in a [quadratic polynomial][quadratic polynomial]]
 
+### Day 7: Camel Cards
+List count() method returns the count of how many times a given object occurs in a list . 
+```
+hand = 'J2JJ3'
+Counters = [hand.count(c) for c in set(hand)]
+```
+Result is Counters = [3,1,1]
+
+### Day 10: Pipe Maze (part 1 only)
+
+
+
 [aoc-about]:   https://adventofcode.com/2023/about
 [fonction du second degre]: https://campussaintjean.be/IMG/pdf/chapitre_3_la_fonction_du_second_degre_1_.pdf
 [quadratic polynomial]: https://www.cuemath.com/algebra/roots-of-quadratic-equation/
