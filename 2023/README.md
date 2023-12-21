@@ -54,7 +54,13 @@ Result is Counters = [3,1,1]
 
 ### Day 10: Pipe Maze (part 1 only)
 
+### Day 12: Hot Springs (part 2 KO)
 
+DFS is used  
+* Part 1 example execution time is 0.0 s
+* Part 1 full input execution time is 0.90 s
+* Part 2 example execution time is 2.95 s
+* Part 2 full input is KO when too many ? on the row
 
 [aoc-about]:   https://adventofcode.com/2023/about
 [fonction du second degre]: https://campussaintjean.be/IMG/pdf/chapitre_3_la_fonction_du_second_degre_1_.pdf
