@@ -56,14 +56,25 @@ Result is Counters = [3,1,1]
 
 ### Day 12: Hot Springs (part 2 KO)
 
-DFS is used  
+a DFS is used  
 * Part 1 example execution time is 0.0 s
 * Part 1 full input execution time is 0.90 s
 * Part 2 example execution time is 2.95 s
-* Part 2 full input is KO when too many ? on the row
+* Part 2 full input (1000 rows)  is KO when too many ? on the row.
+
+Part 2 can have more than 80 millions arrangements per row. DFS can take almost 20 mn per row with this implementation !
+
+I take the solution adapted to DFS provided by  [mebeim][mebeim day12]
+
+DFS LIFO implementation is converted to recursive DFS and use a cache 
+to avoid to do the same search a lot of times.
+
+Part 2 full input execution time is now 1.6 s
+
 
 [aoc-about]:   https://adventofcode.com/2023/about
 [fonction du second degre]: https://campussaintjean.be/IMG/pdf/chapitre_3_la_fonction_du_second_degre_1_.pdf
 [quadratic polynomial]: https://www.cuemath.com/algebra/roots-of-quadratic-equation/
 [bisect]: https://docs.python.org/3/library/bisect.html
 [bisect_right]: https://www.educative.io/answers/what-is-bisectbisectright-in-python
+[mebeim day12]: https://github.com/mebeim/aoc/tree/master/2023#day-12---hot-springs

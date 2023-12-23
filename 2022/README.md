@@ -118,7 +118,7 @@ knots = [(0, 0)] * nb_knots
 x // y  is a floored quotient of x and y. Also referred to as integer division. 
 The resultant value is a whole integer
 
-a [LCM][LCM] is used for the part2. Solution and good explanations are provided by [mbeim][mbeim day11]
+a [LCM][LCM] is used for the part2. Solution and good explanations are provided by [mebeim][mebeim day11]
 
 
 [aoc-about]:   https://adventofcode.com/2022/about
@@ -128,4 +128,4 @@ a [LCM][LCM] is used for the part2. Solution and good explanations are provided 
 [graph algorithms]: https://iq.opengenus.org/list-of-graph-algorithms/
 [dichotomy]: https://cpge.frama.io/fiches-cpge/Python/R%C3%A9solution%20f%28x%29%3D0/Dichotomie/
 [LCM]: https://en.wikipedia.org/wiki/Least_common_multiple
-[mbeim day11]: https://github.com/mebeim/aoc/tree/master/2022#day-11---monkey-in-the-middle
+[mebeim day11]: https://github.com/mebeim/aoc/tree/master/2022#day-11---monkey-in-the-middle
