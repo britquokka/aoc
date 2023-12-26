@@ -63,7 +63,7 @@ class Puzzle:
                 if is_group_valid:
                     nb += self.dfs_recursive(row[1:], new_groups, count, new)
         else:
-            # en with '#"
+            # end with '#"
             if len(groups) == 1 and count_in_group == groups[0]:
                 nb = 1
             # end with '.'
