@@ -1,7 +1,7 @@
-import logging
 import os
 import time
 from TestUtils import TestUtils
+import logging
 
 
 logger = logging.getLogger(__name__)
@@ -71,5 +71,3 @@ if __name__ == '__main__':
     total_load = TestUtils.check_result_no_arg("part1", 109098, puzzle.compute_total_load)
     print("part 1: execution time is ", time.time() - start, " s")
     print("part 1: The total load on the north support beams is  ", total_load)
-
-
