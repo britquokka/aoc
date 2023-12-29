@@ -19,6 +19,8 @@ class Direction(IntEnum):
 class Puzzle:
     delta_by_dir = {Direction.NORTH: (-1, 0), Direction.WEST: (0, -1),
                     Direction.SOUTH: (1, 0), Direction.EAST: (0, 1)}
+    sort_order_by_dir = {Direction.NORTH: False, Direction.WEST: False,
+                         Direction.SOUTH: True, Direction.EAST: True}
 
     @staticmethod
     def move(coord: tuple, delta: tuple):
@@ -42,12 +44,16 @@ class Puzzle:
                 prev_dst = next_dst
         return next_dst
 
+    @staticmethod
+    def order_rounded_rocks(rounded_rocks: set, direction: Direction) -> list:
+        prev_rounded_rocks = list(rounded_rocks)
+        prev_rounded_rocks.sort(reverse=Puzzle.sort_order_by_dir[direction])
+        return prev_rounded_rocks
+
     def move_all(self, rounded_rocks: set, direction: Direction):
         next_rounded_rocks = set()
         delta = Puzzle.delta_by_dir[direction]
-        prev_rounded_rocks = list(rounded_rocks)
-        need_reverse = True if direction == Direction.EAST or direction == Direction.SOUTH else False
-        prev_rounded_rocks.sort(reverse=need_reverse)
+        prev_rounded_rocks = self.order_rounded_rocks(rounded_rocks, direction)
         for rock_coord in prev_rounded_rocks:
             next_dst = self.get_destination(rock_coord, delta, next_rounded_rocks)
             next_rounded_rocks.add(next_dst)
@@ -85,11 +91,7 @@ class Puzzle:
         self.cube_shaped_rocks, self.rounded_rocks, self.x_len, self.y_len = self.to_rock_coords(file)
 
     def compute_load_on_north(self, rounded_rocks):
-        load = 0
-        for y, x in rounded_rocks:
-            load += self.y_len - 1 - y
-
-        return load
+        return sum([self.y_len - 1 - y for y, _ in rounded_rocks])
 
     def compute_total_load(self):
         self.rounded_rocks = self.move_all(self.rounded_rocks, Direction.NORTH)
@@ -123,11 +125,8 @@ class Puzzle:
         # forecast for 1000000000
         cycle_len = found_cycle - initial_cycle
         target_cycle = (1000000000 - initial_cycle) % cycle_len + initial_cycle
-
-        rounded_rocks = rr_by_cycle[target_cycle]
         logger.debug("Target cycle is %d", target_cycle)
-        for cycle, rr in rr_by_cycle.items():
-            logger.debug("cycle %d, load %d", cycle, self.compute_load_on_north(rr))
+        rounded_rocks = rr_by_cycle[target_cycle]
 
         return self.compute_load_on_north(rounded_rocks)
 
