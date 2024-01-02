@@ -71,6 +71,31 @@ to avoid to do the same search a lot of times.
 
 Part 2 full input execution time is now 1.6 s
 
+### Day 14: Parabolic Reflector Dish
+
+### Day 11: Cosmic Expansion
+Python unzip (zip with * operator) is used to transpose rows and columns in input data
+``` 
+def transpose(rows: list):
+    return ["".join(col) for col in zip(*rows)]
+```
+At each iteration, 
+col contains [ rows[0][ j ], rows[1][ j ],... ]
+
+
+### Day 13: Point of Incidence
+
+Python all() is used to find reflection point in a list of string
+
+all() Return True if all elements of the iterable are true (or if the iterable is empty)
+
+```
+up_range = range(proposal + 1, len(lines))
+down_range = range(proposal, -1, -1)
+found = all([lines[i] == lines[j] for i, j in zip(up_range, down_range)])
+```
+
+### Day 15: Lens Library
 
 [aoc-about]:   https://adventofcode.com/2023/about
 [fonction du second degre]: https://campussaintjean.be/IMG/pdf/chapitre_3_la_fonction_du_second_degre_1_.pdf

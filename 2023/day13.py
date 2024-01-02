@@ -20,7 +20,7 @@ class Reflection:
     type: ReflectionType
     idx: int
 
-    def weight(self):
+    def compute_note(self):
         number = self.idx + 1
         w = number if self.type == ReflectionType.VERTICAL else number * 100
         return w
@@ -37,7 +37,7 @@ class Pattern:
     def check_proposal(self, lines, proposal):
         return all([lines[i] == lines[j] for i, j in zip(range(proposal + 1, len(lines)), range(proposal, -1, -1))])
 
-    def find_reflection_number(self, lines: list):
+    def find_reflection_idx(self, lines: list):
         flag_exit_loop, found = False, False
         proposal = 0
         while not flag_exit_loop:
@@ -50,26 +50,27 @@ class Pattern:
         return found, proposal
 
     def find_reflection(self):
-        reflexion = None
+        reflection = None
         rtype = ReflectionType.HORIZONTAL
-        found, number = self.find_reflection_number(self.rows)
+        found, idx = self.find_reflection_idx(self.rows)
         if not found:
             rtype = ReflectionType.VERTICAL
             columns = self.transpose(self.rows)
-            found, number = self.find_reflection_number(columns)
+            found, idx = self.find_reflection_idx(columns)
         if found:
-            reflexion = Reflection(rtype, number)
-        return reflexion
+            reflection = Reflection(rtype, idx)
+        return reflection
 
 
 @dataclass
 class SmudgedPattern(Pattern):
-    allow_fix_smudge: bool
+    allow_fix_smudge: bool = True
 
-    def fix_smudge_once(self, line1: str, line2: str):
+    def test_and_fix(self, line1: str, line2: str):
         is_equal = (line1 == line2)
         if not is_equal and self.allow_fix_smudge:
             nb_common_char = sum([(c1 == c2) for c1, c2 in zip(line1, line2)])
+            # fix the smudge only one time
             if (len(line1) - 1) == nb_common_char:
                 is_equal = True
                 self.allow_fix_smudge = False
@@ -77,8 +78,10 @@ class SmudgedPattern(Pattern):
 
     def check_proposal(self, lines, proposal):
         self.allow_fix_smudge = True
-        found = all([self.fix_smudge_once(lines[i], lines[j])
-                    for i, j in zip(range(proposal + 1, len(lines)), range(proposal, -1, -1))])
+        up_range = range(proposal + 1, len(lines))
+        down_range = range(proposal, -1, -1)
+        found = all([self.test_and_fix(lines[i], lines[j])
+                    for i, j in zip(up_range, down_range)])
         return found and not self.allow_fix_smudge
 
 
@@ -86,7 +89,7 @@ class Puzzle:
     @staticmethod
     def build_pattern(rows: list, fix_smudge: bool):
         if fix_smudge:
-            pattern = SmudgedPattern(rows, fix_smudge)
+            pattern = SmudgedPattern(rows)
         else:
             pattern = Pattern(rows)
         return pattern
@@ -115,9 +118,9 @@ class Puzzle:
     def summarize_notes(self):
         total = 0
         for pattern in self.patterns:
-            reflexion = pattern.find_reflection()
-            if reflexion:
-                total += reflexion.weight()
+            reflection = pattern.find_reflection()
+            if reflection:
+                total += reflection.compute_note()
 
         return total
 
