@@ -82,7 +82,6 @@ def transpose(rows: list):
 At each iteration, 
 col contains [ rows[0][ j ], rows[1][ j ],... ]
 
-
 ### Day 13: Point of Incidence
 
 Python all() is used to find reflection point in a list of string
@@ -96,6 +95,11 @@ found = all([lines[i] == lines[j] for i, j in zip(up_range, down_range)])
 ```
 
 ### Day 15: Lens Library
+
+
+### Day 16: The Floor Will Be Lava
+
+Another DFS with LIFO implementation
 
 [aoc-about]:   https://adventofcode.com/2023/about
 [fonction du second degre]: https://campussaintjean.be/IMG/pdf/chapitre_3_la_fonction_du_second_degre_1_.pdf
