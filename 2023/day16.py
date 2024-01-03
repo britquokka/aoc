@@ -6,8 +6,7 @@ from TestUtils import TestUtils
 from enum import IntEnum
 from collections import defaultdict
 import collections
-import sys
-sys.setrecursionlimit(10000)
+
 
 logger = logging.getLogger(__name__)
 
@@ -51,7 +50,7 @@ class Route:
 
     @staticmethod
     def move(src: tuple, direction: Dir):
-        (y, x) = src
+        y, x = src
         delta_y, delta_x = Route.delta_by_dir[direction]
         return y + delta_y, x + delta_x
 
@@ -74,42 +73,39 @@ class Puzzle:
         y, x = point
         return (x >= 0) and (x < self.x_len) and (y >= 0) and (y < self.y_len)
     
-    def call_dfs(self, entry_point, cur_dir):
-        done = set()
-        energized_set = set()
-        return self.dfs(entry_point, cur_dir, done, energized_set)
+    def call_dfs(self, entry_point, entry_dir):
+        return self.dfs(entry_point, entry_dir)
 
-    def dfs(self, entry_point: tuple, cur_dir: Dir, done, energized_set):
+    def dfs(self, entry_point: tuple, entry_dir: Dir):
+        seen = set()
+        tiles_seen = set()
         lifo = collections.deque()
-        lifo.append((entry_point, cur_dir))
+        lifo.append((entry_point, entry_dir))
         while lifo:
-            src, cur_dir = lifo.pop()
-            dst = self.route.move(src, cur_dir)
-            if self.in_grid(src):
-                done.add((src, cur_dir))
-                energized_set.add(src)
-            if self.in_grid(dst):
-                dst_y, dst_x = dst
-                next_tile = self.grid[dst_y][dst_x]
-                next_dirs = self.route.table[cur_dir][next_tile]
-                for next_dir in next_dirs:
-                    if (dst, next_dir) not in done:
-                        lifo.append((dst, next_dir))
-        return len(energized_set)
+            p, cur_dir = lifo.pop()
+            seen.add((p, cur_dir))
+            tiles_seen.add(p)
+            tile = self.grid[p[0]][p[1]]
+            next_dirs = self.route.table[cur_dir][tile]
+            for next_dir in next_dirs:
+                next_p = self.route.move(p, next_dir)
+                if (next_p, next_dir) not in seen and self.in_grid(next_p):
+                    lifo.append((next_p, next_dir))
+        return len(tiles_seen)
 
     def count_energized_tiles(self):
-        count = self.call_dfs(entry_point=(0, -1), cur_dir=Dir.E)
+        count = self.call_dfs(entry_point=(0, 0), entry_dir=Dir.E)
         return count
 
     def find_best_configuration(self):
         max_count = 0
         for x in range(self.x_len):
-            max_count = max(max_count, self.call_dfs((-1, x), Dir.S))
-            max_count = max(max_count, self.call_dfs((self.y_len, x), Dir.N))
+            max_count = max(max_count, self.call_dfs((0, x), Dir.S))
+            max_count = max(max_count, self.call_dfs((self.y_len-1, x), Dir.N))
 
         for y in range(self.y_len):
-            max_count = max(max_count, self.call_dfs((y, -1), Dir.E))
-            max_count = max(max_count, self.call_dfs((y, self.x_len), Dir.W))
+            max_count = max(max_count, self.call_dfs((y, 0), Dir.E))
+            max_count = max(max_count, self.call_dfs((y, self.x_len-1), Dir.W))
 
         return max_count
 
