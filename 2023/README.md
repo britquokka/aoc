@@ -101,6 +101,29 @@ found = all([lines[i] == lines[j] for i, j in zip(up_range, down_range)])
 
 Another DFS with LIFO implementation
 
+### Profiler in PyCharm
+
+```
+$ pip install snakeviz
+$ pip install cprofilev
+```
+Create new run/debug cfg named "day16 cProfile"
+and add to Interpreter Options 
+```
+-B -m cProfile -o output.prof
+```
+or
+```
+-B -m cProfilev
+```
+and visualize cProfile result in GUI
+```
+$ snakeviz program.prof
+```
+
+
+
+
 [aoc-about]:   https://adventofcode.com/2023/about
 [fonction du second degre]: https://campussaintjean.be/IMG/pdf/chapitre_3_la_fonction_du_second_degre_1_.pdf
 [quadratic polynomial]: https://www.cuemath.com/algebra/roots-of-quadratic-equation/
