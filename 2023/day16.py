@@ -78,20 +78,22 @@ class Puzzle:
 
     def dfs(self, entry_point: tuple, entry_dir: Dir):
         seen = set()
-        tiles_seen = set()
+        tiles_seen = list()
         lifo = collections.deque()
         lifo.append((entry_point, entry_dir))
         while lifo:
             p, cur_dir = lifo.pop()
+            py, px = p
             seen.add((p, cur_dir))
-            tiles_seen.add(p)
-            tile = self.grid[p[0]][p[1]]
+            tiles_seen.append(p)
+            tile = self.grid[py][px]
             next_dirs = self.route.table[cur_dir][tile]
             for next_dir in next_dirs:
                 next_p = self.route.move(p, next_dir)
-                if (next_p, next_dir) not in seen and self.in_grid(next_p):
-                    lifo.append((next_p, next_dir))
-        return len(tiles_seen)
+                if self.in_grid(next_p):
+                    if (next_p, next_dir) not in seen:
+                        lifo.append((next_p, next_dir))
+        return len(set(tiles_seen))
 
     def count_energized_tiles(self):
         count = self.call_dfs(entry_point=(0, 0), entry_dir=Dir.E)
