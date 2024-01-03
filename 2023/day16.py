@@ -60,20 +60,14 @@ class Puzzle:
 
     @staticmethod
     def to_grid(file):
-        grid = {}
         with open(file) as f:
-            y = 0
-            for line in f:
-                row = line.strip()
-                x_len = len(row)
-                for x, c in enumerate(row):
-                    grid[(y, x)] = c
-                y += 1
-            y_len = y
-        return grid, y_len, x_len
+            grid = f.read().splitlines()
+        return grid
 
     def __init__(self, file):
-        self.grid, self.y_len, self.x_len = self.to_grid(file)
+        self.grid = self.to_grid(file)
+        self.y_len = len(self.grid)
+        self.x_len = len(self.grid[0])
         self.route = Route()
 
     def in_grid(self, point):
@@ -95,7 +89,8 @@ class Puzzle:
                 done.add((src, cur_dir))
                 energized_set.add(src)
             if self.in_grid(dst):
-                next_tile = self.grid[dst]
+                dst_y, dst_x = dst
+                next_tile = self.grid[dst_y][dst_x]
                 next_dirs = self.route.table[cur_dir][next_tile]
                 for next_dir in next_dirs:
                     if (dst, next_dir) not in done:
