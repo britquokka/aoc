@@ -74,7 +74,7 @@ class Puzzle:
         # go into the loop
         flag_exit_loop = False
         while not flag_exit_loop:
-            (y, x) = Puzzle.move((y, x), next_dir)
+            (y, x) = Puzzle.move(pos=(y, x), next_dir=next_dir)
             pipe_code = self.sketch[y][x]
             path.appendleft((y, x))
             if pipe_code != 'S':
