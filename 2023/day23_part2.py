@@ -3,7 +3,6 @@ import logging
 import os
 import time
 from TestUtils import TestUtils
-from enum import IntEnum
 from collections import defaultdict
 
 logger = logging.getLogger(__name__)
@@ -99,12 +98,12 @@ class Puzzle:
         lifo.append((start, visited, path_len))
         while lifo:
             node, visited, path_len = lifo.pop()
+            visited.add(node)
             if node == target:
                 max_path_len = max(max_path_len, path_len)
             else:
                 for (neighbour, weight) in self.graph.adj_list[node]:
                     if neighbour not in visited:
-                        visited.add(node)
                         lifo.append((neighbour, visited.copy(), path_len+weight))
         return max_path_len
 
