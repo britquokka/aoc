@@ -120,6 +120,20 @@ and visualize cProfile result in GUI
 ```
 $ snakeviz program.prof
 ```
+### Day 23: A Long Walk
+Depth-First Search (DFS) practical work.
+
+For part 2, a weighted graph is used. Only node with intersection ( = with more than 2 edges ) from the initial grid are kept in the graph. 
+
+Each edge has a weight equal to the distance between 2 nodes connected by the edge
+
+The weighted graph is represented by an adjacency list.
+
+
+
+
+
+
 
 
 
