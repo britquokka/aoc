@@ -76,18 +76,18 @@ class Puzzle:
         # go to the south once to avoid to build outside neighbours
         y, x = self.start
         first_p = (y + 1, x)
-        next_node, path, distance = self.explore_edge(self.start, first_p, self.target)
+        next_node, path, path_len = self.explore_edge(self.start, first_p, self.target)
         visited.update(path)
+        graph.add_edge(self.start, next_node, path_len)
         lifo.append(next_node)
-        graph.add_edge(self.start, next_node, distance)
         while lifo:
             node = lifo.pop()
             neighbours = self.build_neighbours(node)
             for neighbour in neighbours:
                 if neighbour not in visited:
-                    next_node, path, distance = self.explore_edge(node, neighbour, self.target)
+                    next_node, path, path_len = self.explore_edge(node, neighbour, self.target)
                     visited.update(path)
-                    graph.add_edge(node, next_node, distance)
+                    graph.add_edge(node, next_node, path_len)
                     if next_node != self.target:
                         lifo.append(next_node)
         return graph
