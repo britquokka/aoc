@@ -52,38 +52,44 @@ class Puzzle:
                 neighbours.append((r, c))
         return neighbours
 
+    def explore_edge(self, start_node, first_point, exit_node):
+        next_node = None
+        visited = set()
+        visited.add(start_node)
+        lifo = collections.deque()
+        lifo.append(first_point)
+        while lifo:
+            p = lifo.pop()
+            visited.add(p)
+            neighbours = self.build_neighbours(p) if p != exit_node else []
+            if len(neighbours) == 2:
+                for neighbour in neighbours:
+                    if neighbour not in visited:
+                        lifo.append(neighbour)
+            next_node = p
+        return next_node, visited, len(visited) - 1
+
     def build_graph_with_dfs(self):
         graph = Graph()
         visited = set()
         lifo = collections.deque()
         # go to the south once to avoid to build outside neighbours
-        visited.add(self.start)
         y, x = self.start
         first_p = (y + 1, x)
-        visited.add(first_p)
-        lifo.append((first_p, 0, first_p))
-        graph.add_edge(self.start, first_p, weight=1)
+        next_node, path, distance = self.explore_edge(self.start, first_p, self.target)
+        visited.update(path)
+        lifo.append(next_node)
+        graph.add_edge(self.start, next_node, distance)
         while lifo:
-            p, depth, prev_node = lifo.pop()
-            if p == self.target:
-                graph.add_edge(prev_node, p, depth)
-            else:
-                neighbours = self.build_neighbours(p)
-                depth += 1
-                # path without intersection
-                if len(neighbours) == 2:
-                    visited.add(p)
-                    for neighbour in neighbours:
-                        if neighbour not in visited:
-                            lifo.append((neighbour, depth, prev_node))
-                # intersection found because we have more than 2 neighbours
-                elif len(neighbours) > 2 and p != prev_node:
-                    graph.add_edge(prev_node, p, depth)
-                    depth = 0
-                    prev_node = p
-                    for neighbour in neighbours:
-                        if neighbour not in visited:
-                            lifo.append((neighbour, depth, prev_node))
+            node = lifo.pop()
+            neighbours = self.build_neighbours(node)
+            for neighbour in neighbours:
+                if neighbour not in visited:
+                    next_node, path, distance = self.explore_edge(node, neighbour, self.target)
+                    visited.update(path)
+                    graph.add_edge(node, next_node, distance)
+                    if next_node != self.target:
+                        lifo.append(next_node)
         return graph
 
     def find_max_steps(self):
