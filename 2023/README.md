@@ -129,6 +129,9 @@ Each edge has a weight equal to the distance between 2 nodes connected by the ed
 
 The weighted graph is represented by an adjacency list.
 
+### Day 21: Step Counter
+For part 1 , a DFS with state store is used. 
+It avoids to redo the same exploration several times
 
 
 
