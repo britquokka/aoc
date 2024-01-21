@@ -1,11 +1,8 @@
-import collections
 import logging
 import os
 import time
-import re
-
-
 from TestUtils import TestUtils
+
 
 logger = logging.getLogger(__name__)
 
@@ -51,17 +48,23 @@ class Puzzle:
         flag_exit_loop = False
         idx = 0
         nb = len(self.instructions)
-        start_nodes = list(filter(lambda n: 'A' in n, self.network.keys()))
+        start_nodes = set(filter(lambda n: 'A' in n, self.network.keys()))
         target_nodes = set(filter(lambda n: 'Z' in n, self.network.keys()))
         current_nodes = start_nodes
         while not flag_exit_loop:
             instruction = self.instructions[idx % nb]
             idx_dst = 0 if instruction == 'L' else 1
-            next_node = self.network[current_node][idx_dst]
-            if next_node == target:
+            next_nodes = set([self.network[n][idx_dst] for n in current_nodes])
+            intersection = next_nodes & target_nodes
+            #if len(intersection) >= 2:
+            #    logger.warning("idx:%d", idx)
+            #    logger.warning(next_nodes)
+            #    logger.warning(intersection)
+
+            if len(intersection) == len(next_nodes):
                 flag_exit_loop = True
             idx += 1
-            current_node = next_node
+            current_nodes = next_nodes
 
         return idx
 
@@ -95,6 +98,15 @@ if __name__ == '__main__':
 
     print("-----------------")
     input_file = INPUT_FILE_EXAMPLE_PART2
+    print("part 2: input file is ", input_file)
+    t0 = time.time()
+    puzzle = Puzzle(input_file)
+    num_steps = TestUtils.check_result_no_arg("part2", 6, puzzle.find_num_steps_part2)
+    print("part 2: execution time is ", time.time() - t0, " s")
+    print("part 2: The number of steps to reach 'Z' nodes is ", num_steps)
+
+    print("-----------------")
+    input_file = INPUT_FILE
     print("part 2: input file is ", input_file)
     t0 = time.time()
     puzzle = Puzzle(input_file)
