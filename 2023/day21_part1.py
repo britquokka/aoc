@@ -10,16 +10,8 @@ logger = logging.getLogger(__name__)
 class Puzzle:
     @staticmethod
     def to_grid(file):
-        grid = []
         with open(file) as f:
-            nb_column = len(f.readline().strip()) + 2
-            initial_row = ['#'] * nb_column
-            grid.append(initial_row)
-            f.seek(0)
-            for line in f:
-                row = '#' + str(line.strip()) + '#'
-                grid.append([c for c in row])
-            grid.append(initial_row.copy())
+            grid = f.read().splitlines()
         return grid
 
     @staticmethod
@@ -34,15 +26,18 @@ class Puzzle:
 
     def __init__(self, file):
         self.grid, self.start = self.to_garden(file)
+        self.nb_row = len(self.grid)
+        self.nb_column = len(self.grid[0])
 
     def build_neighbours(self, p):
         (y, x) = p
         neighbours = []
         all_neighbours = [(y - 1, x), (y, x + 1), (y + 1, x), (y, x - 1)]
         for r, c in all_neighbours:
-            tile = self.grid[r][c]
-            if tile != '#':
-                neighbours.append((r, c))
+            if (0 <= r < self.nb_row) and (0 <= c < self.nb_column):
+                tile = self.grid[r][c]
+                if tile != '#':
+                    neighbours.append((r, c))
         return neighbours
 
     def find_num_garden_plots(self, nb_steps):
@@ -50,7 +45,7 @@ class Puzzle:
         return len(reachable)
 
     def dfs(self, start, step_target):
-        nb_path, step = 0, 0
+        nb_path, step = 0, step_target
         reachable, visited = set(), set()
         fifo = collections.deque()
         start_state = (start, step)
@@ -58,10 +53,10 @@ class Puzzle:
         fifo.append(start_state)
         while fifo:
             node, step = fifo.pop()
-            step += 1
-            if step <= step_target:
+            step -= 1
+            if step >= 0:
                 neighbours = self.build_neighbours(node)
-                if step == step_target:
+                if step == 0:
                     nb_path += len(neighbours)
                     reachable.update(neighbours)
                 else:
