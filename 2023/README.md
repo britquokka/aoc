@@ -138,6 +138,11 @@ It avoids to redo the same exploration several times
 For part 2, all way from nodes 'xxA' to 'yyA' don't intersect, 
 so you need to find the number of steps for each network path and compute the [LCM][LCM] of the steps found.
 
+###  Day 9: Mirage Maintenance
+Slicing and recursive function practical works
+
+The built-in function any(iterable) is used to test if an element of the list is > 0
+
 
 [aoc-about]:   https://adventofcode.com/2023/about
 [fonction du second degre]: https://campussaintjean.be/IMG/pdf/chapitre_3_la_fonction_du_second_degre_1_.pdf
