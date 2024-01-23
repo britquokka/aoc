@@ -133,12 +133,10 @@ The weighted graph is represented by an adjacency list.
 For part 1 , a DFS with state store is used. 
 It avoids to redo the same exploration several times
 
+### Day 8: Haunted Wasteland
 
-
-
-
-
-
+For part 2, all way from nodes 'xxA' to 'yyA' don't intersect, 
+so you need to find the number of steps for each network path and compute the [LCM][LCM] of the steps found.
 
 
 [aoc-about]:   https://adventofcode.com/2023/about
@@ -147,3 +145,4 @@ It avoids to redo the same exploration several times
 [bisect]: https://docs.python.org/3/library/bisect.html
 [bisect_right]: https://www.educative.io/answers/what-is-bisectbisectright-in-python
 [mebeim day12]: https://github.com/mebeim/aoc/tree/master/2023#day-12---hot-springs
+[LCM]: https://en.wikipedia.org/wiki/Least_common_multiple
