@@ -2,6 +2,7 @@ import logging
 import os
 import time
 from TestUtils import TestUtils
+import math
 
 
 logger = logging.getLogger(__name__)
@@ -27,46 +28,38 @@ class Puzzle:
         logger.debug(self.network)
 
     def find_num_steps(self):
+        step, _ = self.find_targets('AAA', ['ZZZ'])
+        return step
+
+    def find_targets(self, start, targets):
         flag_exit_loop = False
-        idx = 0
+        step = 0
         nb = len(self.instructions)
-        start = 'AAA'
-        target = 'ZZZ'
         current_node = start
         while not flag_exit_loop:
-            instruction = self.instructions[idx % nb]
+            instruction = self.instructions[step % nb]
             idx_dst = 0 if instruction == 'L' else 1
             next_node = self.network[current_node][idx_dst]
-            if next_node == target:
+            if next_node in targets:
                 flag_exit_loop = True
-            idx += 1
+            step += 1
             current_node = next_node
 
-        return idx
+        return step, current_node
 
     def find_num_steps_part2(self):
-        flag_exit_loop = False
-        idx = 0
-        nb = len(self.instructions)
         start_nodes = set(filter(lambda n: 'A' in n, self.network.keys()))
         target_nodes = set(filter(lambda n: 'Z' in n, self.network.keys()))
-        current_nodes = start_nodes
-        while not flag_exit_loop:
-            instruction = self.instructions[idx % nb]
-            idx_dst = 0 if instruction == 'L' else 1
-            next_nodes = set([self.network[n][idx_dst] for n in current_nodes])
-            intersection = next_nodes & target_nodes
-            #if len(intersection) >= 2:
-            #    logger.warning("idx:%d", idx)
-            #    logger.warning(next_nodes)
-            #    logger.warning(intersection)
+        found_nodes = []
+        for start in start_nodes:
+            step, found_node = self.find_targets(start, target_nodes)
+            found_nodes.append((step, found_node))
+        logger.debug(start_nodes)
+        logger.debug(target_nodes)
+        logger.debug(found_nodes)
+        steps = [step for step, _ in found_nodes]
 
-            if len(intersection) == len(next_nodes):
-                flag_exit_loop = True
-            idx += 1
-            current_nodes = next_nodes
-
-        return idx
+        return math.lcm(*steps)
 
 
 # Press the green button in the gutter to run the script.
@@ -110,6 +103,6 @@ if __name__ == '__main__':
     print("part 2: input file is ", input_file)
     t0 = time.time()
     puzzle = Puzzle(input_file)
-    num_steps = TestUtils.check_result_no_arg("part2", 6, puzzle.find_num_steps_part2)
+    num_steps = TestUtils.check_result_no_arg("part2", 17972669116327, puzzle.find_num_steps_part2)
     print("part 2: execution time is ", time.time() - t0, " s")
     print("part 2: The number of steps to reach 'Z' nodes is ", num_steps)
