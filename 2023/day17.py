@@ -30,11 +30,12 @@ class Puzzle:
         self.cache_dfs_results = {}
         self.start = (0, 0)
         self.target = (len(self.city_blocks) - 1, len(self.city_blocks[0]) - 1)
+        self.r_max = len(self.city_blocks)
+        self.c_max = len(self.city_blocks[0])
 
     def dfs(self, start: tuple, target: tuple):
         min_heat_loss = float('inf')
         r, c = start
-        heat_loss = self.city_blocks[r][c]
         lifo = collections.deque()
         lifo.append(((r+1, c), Dir.S, set(), 0))
         lifo.append(((r, c+1), Dir.E, set(), 0))
@@ -57,9 +58,25 @@ class Puzzle:
         min_heat_loss = self.dfs(self.start, self.target)
         return min_heat_loss
 
-    def build_neighbours(self, p, direction: Dir):
-        neighbours = []
+    def in_cities(self, point):
+        r, c = point
+        return (r >= 0) and (r < self.r_max) and (c >= 0) and (c < self.c_max)
 
+    def build_neighbours(self, p, cur_dir: Dir):
+        r, c = p
+        all_neighbours = [((r - 1, c), Dir.N),
+                          ((r, c + 1), Dir.E),
+                          ((r + 1, c), Dir.S),
+                          ((r, c - 1), Dir.W)]
+        if cur_dir == Dir.E:
+            all_neighbours.pop(Dir.W)
+        elif cur_dir == Dir.W:
+            all_neighbours.pop(Dir.E)
+        elif cur_dir == Dir.N:
+            all_neighbours.pop(Dir.S)
+        elif cur_dir == Dir.S:
+            all_neighbours.pop(Dir.N)
+        neighbours = set(filter(lambda neigh: self.in_cities(neigh[0]), all_neighbours))
         return neighbours
 
 
