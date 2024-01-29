@@ -62,6 +62,7 @@ class Puzzle:
         r, c = point
         return (r >= 0) and (r < self.r_max) and (c >= 0) and (c < self.c_max)
 
+
     def build_neighbours(self, p, cur_dir: Dir):
         r, c = p
         all_neighbours = [((r - 1, c), Dir.N),
