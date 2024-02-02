@@ -143,6 +143,22 @@ Slicing and recursive function practical works
 
 The built-in function any(iterable) is used to test if an element of the list is > 0
 
+### Day 17: Clumsy Crucible
+
+My first [Dijkstra][Dijkstra]
+
+It uses a priority queue
+```
+import heapq
+customers = []
+heapq.heappush(customers, (2, "Harry"))
+heapq.heappush(customers, (3, "Charles"))
+heapq.heappush(customers, (1, "Riya"))
+heapq.heappush(customers, (4, "Stacy"))
+while customers:
+     print(heapq.heappop(q))
+#Will print names in the order: Riya, Harry, Charles, Stacy.
+```
 
 [aoc-about]:   https://adventofcode.com/2023/about
 [fonction du second degre]: https://campussaintjean.be/IMG/pdf/chapitre_3_la_fonction_du_second_degre_1_.pdf
@@ -151,3 +167,4 @@ The built-in function any(iterable) is used to test if an element of the list is
 [bisect_right]: https://www.educative.io/answers/what-is-bisectbisectright-in-python
 [mebeim day12]: https://github.com/mebeim/aoc/tree/master/2023#day-12---hot-springs
 [LCM]: https://en.wikipedia.org/wiki/Least_common_multiple
+[Dijkstra]: https://builtin.com/software-engineering-perspectives/dijkstras-algorithm

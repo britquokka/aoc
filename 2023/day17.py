@@ -49,25 +49,29 @@ class Puzzle:
             city_blocks.append([int(c) for c in row])
         return city_blocks
 
-    def __init__(self, file):
+    def __init__(self, file, min_move=1, max_move=3):
         self.city_blocks = self.to_city_blocks(file)
         self.cache_dfs_results = {}
         self.start = (0, 0)
         self.target = (len(self.city_blocks) - 1, len(self.city_blocks[0]) - 1)
         self.r_max = len(self.city_blocks) - 1
         self.c_max = len(self.city_blocks[0]) - 1
+        self.min_move = min_move
+        self.max_move = max_move
 
-    def dijkstra(self, start: tuple):
+    def dijkstra(self, start_coord: tuple):
         distances = defaultdict(lambda: float('inf'))
         parents = dict()
         visited = set()
-        start_h = NodeState(start, Orientation.H)
-        start_v = NodeState(start, Orientation.V)
-        distances[start_h] = 0
-        distances[start_v] = 0
-        parents[start_h] = None
-        parents[start_v] = None
-        queue = [(0, start_h), (0, start_v)]  # priority queue
+        queue = []
+
+        # 2 start nodes
+        for orientation in Orientation:
+            start = NodeState(start_coord, orientation)
+            distances[start] = 0
+            parents[start] = None
+            queue.append((0, start))  # priority queue
+
         while queue:
             d, node = heapq.heappop(queue)
             visited.add(node)
@@ -113,7 +117,7 @@ class Puzzle:
         r, c = point
         return (r >= 0) and (r <= self.r_max) and (c >= 0) and (c <= self.c_max)
 
-    def build_v_edges(self, coord, x_range: range):
+    def build_v_edges(self, coord, x_range: range, min_move):
         all_neighbours = []
         r, c = coord
         d_from_node = 0
@@ -122,10 +126,11 @@ class Puzzle:
             if self.in_cities(new_coord):
                 neighbor = NodeState(new_coord, Orientation.V)
                 d_from_node += self.city_blocks[next_r][next_c]
-                all_neighbours.append((neighbor, d_from_node))
+                if abs(x) >= min_move:
+                    all_neighbours.append((neighbor, d_from_node))
         return all_neighbours
 
-    def build_h_edges(self, coord, y_range: range):
+    def build_h_edges(self, coord, y_range: range, min_move):
         all_neighbours = []
         r, c = coord
         d_from_node = 0
@@ -134,17 +139,19 @@ class Puzzle:
             if self.in_cities(new_coord):
                 neighbor = NodeState(new_coord, Orientation.H)
                 d_from_node += self.city_blocks[next_r][next_c]
-                all_neighbours.append((neighbor, d_from_node))
+                if abs(y) >= min_move:
+                    all_neighbours.append((neighbor, d_from_node))
         return all_neighbours
 
     def build_neighbours(self, node: NodeState):
-
+        range_up = range(1, self.max_move + 1)
+        range_down = range(-1, -(self.max_move+1), -1)
         if node.orientation == Orientation.H:
-            all_neighbours = self.build_v_edges(node.coord, range(1, 4))
-            all_neighbours.extend(self.build_v_edges(node.coord, range(-1, -4, -1)))
+            all_neighbours = self.build_v_edges(node.coord, range_up, self.min_move)
+            all_neighbours.extend(self.build_v_edges(node.coord, range_down, self.min_move))
         else:
-            all_neighbours = self.build_h_edges(node.coord, range(1, 4))
-            all_neighbours.extend(self.build_h_edges(node.coord, range(-1, -4, -1)))
+            all_neighbours = self.build_h_edges(node.coord, range_up, self.min_move)
+            all_neighbours.extend(self.build_h_edges(node.coord, range_down, self.min_move))
 
         return all_neighbours
 
@@ -174,3 +181,21 @@ if __name__ == '__main__':
     least_heat_loss = TestUtils.check_result_no_arg("part1", 638, puzzle.find_least_heat_loss)
     print("part 1: execution time is ", time.time() - t0, " s")
     print("part 1: The least heat loss is ", least_heat_loss)
+
+    print("-----------------")
+    input_file = INPUT_FILE_EXAMPLE
+    print("part 2: input file is ", input_file)
+    t0 = time.time()
+    puzzle = Puzzle(input_file, min_move=4, max_move=10)
+    least_heat_loss = TestUtils.check_result_no_arg("part2", 94, puzzle.find_least_heat_loss)
+    print("part 2: execution time is ", time.time() - t0, " s")
+    print("part 2: The least heat loss is ", least_heat_loss)
+
+    print("-----------------")
+    input_file = INPUT_FILE
+    print("part 2: input file is ", input_file)
+    t0 = time.time()
+    puzzle = Puzzle(input_file, min_move=4, max_move=10)
+    least_heat_loss = TestUtils.check_result_no_arg("part2", 748, puzzle.find_least_heat_loss)
+    print("part 2: execution time is ", time.time() - t0, " s")
+    print("part 2: The least heat loss is ", least_heat_loss)
