@@ -1,18 +1,42 @@
+import heapq
 import logging
 import os
 import time
 from TestUtils import TestUtils
 from enum import IntEnum
-import collections
+from dataclasses import dataclass
+from collections import defaultdict
 
 logger = logging.getLogger(__name__)
 
 
-class Dir(IntEnum):
-    N = 0
-    E = 1
-    S = 2
-    W = 3
+class Orientation(IntEnum):
+    H = 0
+    V = 1
+
+
+@dataclass(frozen=True)
+class NodeState:
+    coord: tuple
+    orientation: Orientation
+
+    def __eq__(self, other):
+        return (self.coord == other.coord) and (self.orientation == other.orientation)
+
+    def __ne__(self, other):
+        return not (self == other)
+
+    def __lt__(self, other):
+        return (self.coord < other.coord) and (self.orientation < other.orientation)
+
+    def __gt__(self, other):
+        return (self.coord > other.coord) and (self.orientation > other.orientation)
+
+    def __le__(self, other):
+        return (self < other) or (self == other)
+
+    def __ge__(self, other):
+        return (self > other) or (self == other)
 
 
 class Puzzle:
@@ -30,55 +54,99 @@ class Puzzle:
         self.cache_dfs_results = {}
         self.start = (0, 0)
         self.target = (len(self.city_blocks) - 1, len(self.city_blocks[0]) - 1)
-        self.r_max = len(self.city_blocks)
-        self.c_max = len(self.city_blocks[0])
+        self.r_max = len(self.city_blocks) - 1
+        self.c_max = len(self.city_blocks[0]) - 1
 
-    def dfs(self, start: tuple, target: tuple):
-        min_heat_loss = float('inf')
-        r, c = start
-        lifo = collections.deque()
-        lifo.append(((r+1, c), Dir.S, set(), 0))
-        lifo.append(((r, c+1), Dir.E, set(), 0))
-        while lifo:
-            p, cur_dir, visited, curr_heat_loss = lifo.pop()
-            visited.add((p, cur_dir))
-            r, c = p
-            curr_heat_loss += self.city_blocks[r][c]
-            if p == target:
-                min_heat_loss = min(min_heat_loss, curr_heat_loss)
+    def dijkstra(self, start: tuple):
+        distances = defaultdict(lambda: float('inf'))
+        parents = dict()
+        visited = set()
+        start_h = NodeState(start, Orientation.H)
+        start_v = NodeState(start, Orientation.V)
+        distances[start_h] = 0
+        distances[start_v] = 0
+        parents[start_h] = None
+        parents[start_v] = None
+        queue = [(0, start_h), (0, start_v)]  # priority queue
+        while queue:
+            d, node = heapq.heappop(queue)
+            visited.add(node)
+            neighbours = self.build_neighbours(node)
+            for neighbor, neigh_d in neighbours:
+                if neighbor not in visited:
+                    new_d = d + neigh_d
+                    if new_d < distances[neighbor]:
+                        distances[neighbor] = new_d
+                        parents[neighbor] = node
+                        heapq.heappush(queue, (new_d, neighbor))
+        return distances, parents
+
+    @staticmethod
+    def build_path(parent_by_child, target):
+        path = [target]
+        flag_exit_loop = False
+        child = target
+        while not flag_exit_loop:
+            parent = parent_by_child[child]
+            if parent:
+                path.append(parent)
+                child = parent
             else:
-                if curr_heat_loss < min_heat_loss:
-                    neighbours = self.build_neighbours(p, cur_dir)
-                    for neigh_p, neigh_dir in neighbours:
-                        if (neigh_p, neigh_dir) not in visited:
-                            lifo.append((neigh_p, neigh_dir, visited.copy(), curr_heat_loss))
-        return min_heat_loss
+                flag_exit_loop = True
+        return path
 
     def find_least_heat_loss(self):
-        min_heat_loss = self.dfs(self.start, self.target)
+        heat_loss_by_dst, parents = self.dijkstra(self.start)
+
+        # 2 result by cities
+        d_h = heat_loss_by_dst[NodeState(self.target, Orientation.H)]
+        d_v = heat_loss_by_dst[NodeState(self.target, Orientation.V)]
+        min_heat_loss = min(d_h, d_v)
+
+        logging.debug(self.build_path(parents, NodeState(self.target, Orientation.H)))
+        logging.debug(self.build_path(parents, NodeState(self.target, Orientation.H)))
+        logging.debug(heat_loss_by_dst)
+
         return min_heat_loss
 
     def in_cities(self, point):
         r, c = point
-        return (r >= 0) and (r < self.r_max) and (c >= 0) and (c < self.c_max)
+        return (r >= 0) and (r <= self.r_max) and (c >= 0) and (c <= self.c_max)
 
+    def build_v_edges(self, coord, x_range: range):
+        all_neighbours = []
+        r, c = coord
+        d_from_node = 0
+        for x in x_range:
+            new_coord = next_r, next_c = (r, c + x)
+            if self.in_cities(new_coord):
+                neighbor = NodeState(new_coord, Orientation.V)
+                d_from_node += self.city_blocks[next_r][next_c]
+                all_neighbours.append((neighbor, d_from_node))
+        return all_neighbours
 
-    def build_neighbours(self, p, cur_dir: Dir):
-        r, c = p
-        all_neighbours = [((r - 1, c), Dir.N),
-                          ((r, c + 1), Dir.E),
-                          ((r + 1, c), Dir.S),
-                          ((r, c - 1), Dir.W)]
-        if cur_dir == Dir.E:
-            all_neighbours.pop(Dir.W)
-        elif cur_dir == Dir.W:
-            all_neighbours.pop(Dir.E)
-        elif cur_dir == Dir.N:
-            all_neighbours.pop(Dir.S)
-        elif cur_dir == Dir.S:
-            all_neighbours.pop(Dir.N)
-        neighbours = set(filter(lambda neigh: self.in_cities(neigh[0]), all_neighbours))
-        return neighbours
+    def build_h_edges(self, coord, y_range: range):
+        all_neighbours = []
+        r, c = coord
+        d_from_node = 0
+        for y in y_range:
+            new_coord = next_r, next_c = (r+y, c)
+            if self.in_cities(new_coord):
+                neighbor = NodeState(new_coord, Orientation.H)
+                d_from_node += self.city_blocks[next_r][next_c]
+                all_neighbours.append((neighbor, d_from_node))
+        return all_neighbours
+
+    def build_neighbours(self, node: NodeState):
+
+        if node.orientation == Orientation.H:
+            all_neighbours = self.build_v_edges(node.coord, range(1, 4))
+            all_neighbours.extend(self.build_v_edges(node.coord, range(-1, -4, -1)))
+        else:
+            all_neighbours = self.build_h_edges(node.coord, range(1, 4))
+            all_neighbours.extend(self.build_h_edges(node.coord, range(-1, -4, -1)))
+
+        return all_neighbours
 
 
 # Press the green button in the gutter to run the script.
@@ -94,8 +162,15 @@ if __name__ == '__main__':
     print("part 1: input file is ", input_file)
     t0 = time.time()
     puzzle = Puzzle(input_file)
-    least_heat_loss = TestUtils.check_result_no_arg("part1", 114, puzzle.find_least_heat_loss)
+    least_heat_loss = TestUtils.check_result_no_arg("part1", 102, puzzle.find_least_heat_loss)
     print("part 1: execution time is ", time.time() - t0, " s")
     print("part 1: The least heat loss is ", least_heat_loss)
 
-
+    print("-----------------")
+    input_file = INPUT_FILE
+    print("part 1: input file is ", input_file)
+    t0 = time.time()
+    puzzle = Puzzle(input_file)
+    least_heat_loss = TestUtils.check_result_no_arg("part1", 638, puzzle.find_least_heat_loss)
+    print("part 1: execution time is ", time.time() - t0, " s")
+    print("part 1: The least heat loss is ", least_heat_loss)
