@@ -80,7 +80,10 @@ def transpose(rows: list):
     return ["".join(col) for col in zip(*rows)]
 ```
 At each iteration, 
-col contains [ rows[0][ j ], rows[1][ j ],... ]
+col contains 
+```
+[ rows[0][ j ], rows[1][ j ],... ]
+```
 
 ### Day 13: Point of Incidence
 
@@ -159,6 +162,24 @@ while customers:
      print(heapq.heappop(q))
 #Will print names in the order: Riya, Harry, Charles, Stacy.
 ```
+### Day 18: Lavaduct Lagoon
+
+The [shoelace formula][shoelace] is used to determine the area of a 
+simple polygon whose vertices are described by their Cartesian 
+coordinates in the plane.  
+
+Python itertools.pairwise is used to iterate on two consecutive elements in a list
+```
+pairwise('ABCDEFG') --> AB BC CD DE EF FG
+```
+```
+def shoelace_formula(vertices: list):
+    res = 0
+    # vertex is a tuple who contains coordinate (y, x)
+    for vertex, next_vertex in itertools.pairwise(vertices):
+        res += vertex[1] * next_vertex[0] - vertex[0] * next_vertex[1]
+    return abs(res) / 2
+```
 
 [aoc-about]:   https://adventofcode.com/2023/about
 [fonction du second degre]: https://campussaintjean.be/IMG/pdf/chapitre_3_la_fonction_du_second_degre_1_.pdf
@@ -168,3 +189,4 @@ while customers:
 [mebeim day12]: https://github.com/mebeim/aoc/tree/master/2023#day-12---hot-springs
 [LCM]: https://en.wikipedia.org/wiki/Least_common_multiple
 [Dijkstra]: https://builtin.com/software-engineering-perspectives/dijkstras-algorithm
+[shoelace]: http://villemin.gerard.free.fr/GeomLAV/Polygone/Lacet.htm
