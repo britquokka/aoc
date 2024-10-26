@@ -181,6 +181,11 @@ def shoelace_formula(vertices: list):
     return abs(res) / 2
 ```
 
+### Day 19: Aplenty
+
+[composite design pattern][composite design pattern] is used to solve the puzzle
+
+
 [aoc-about]:   https://adventofcode.com/2023/about
 [fonction du second degre]: https://campussaintjean.be/IMG/pdf/chapitre_3_la_fonction_du_second_degre_1_.pdf
 [quadratic polynomial]: https://www.cuemath.com/algebra/roots-of-quadratic-equation/
@@ -190,3 +195,4 @@ def shoelace_formula(vertices: list):
 [LCM]: https://en.wikipedia.org/wiki/Least_common_multiple
 [Dijkstra]: https://builtin.com/software-engineering-perspectives/dijkstras-algorithm
 [shoelace]: http://villemin.gerard.free.fr/GeomLAV/Polygone/Lacet.htm
+[composite design pattern]: https://refactoring.guru/design-patterns/composite/python/example#lang-features

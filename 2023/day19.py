@@ -144,6 +144,7 @@ class Workflow:
         while not flag_exit_loop:
             rule = self.rules[i]
             result = rule.apply(ratings)
+            # go to next rule if no result
             if result is None:
                 i += 1
             else:
