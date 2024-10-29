@@ -22,22 +22,22 @@ class Puzzle:
         logging.debug(self.timers)
 
     def compute_nb_fishes(self, nb_days):
-        nb_fishes_by_timer = defaultdict(int)
+        nb_fishes_by_timer = [0] * 9
 
         for t in self.timers:
             nb_fishes_by_timer[t] += 1
 
         while nb_days > 0:
             nb_days -= 1
-            tmp_dict = defaultdict(int)
+            tmp_counters = [0] * 9
             for t in range(9):
                 if t == 0:
-                    tmp_dict[8] = nb_fishes_by_timer[0]
-                    tmp_dict[6] = nb_fishes_by_timer[0]
+                    tmp_counters[8] = nb_fishes_by_timer[0]
+                    tmp_counters[6] = nb_fishes_by_timer[0]
                 else:
-                    tmp_dict[t-1] += nb_fishes_by_timer[t]
-            nb_fishes_by_timer = tmp_dict
-        return sum(nb_fishes_by_timer.values())
+                    tmp_counters[t-1] += nb_fishes_by_timer[t]
+            nb_fishes_by_timer = tmp_counters
+        return sum(nb_fishes_by_timer)
 
 
 # Press the green button in the gutter to run the script.
