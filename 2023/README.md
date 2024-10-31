@@ -79,10 +79,14 @@ Python unzip (zip with * operator) is used to transpose rows and columns in inpu
 def transpose(rows: list):
     return ["".join(col) for col in zip(*rows)]
 ```
-At each iteration, 
-col contains 
+the zip() function takes multiple iterable objects as arguments and returns an iterator of tuples containing
+elements from each of the iterables.
 ```
-[ rows[0][ j ], rows[1][ j ],... ]
+>>> numbers = [1, 2, 3]
+>>> letters = ['a', 'b', 'c']
+>>> zipped = zip(numbers, letters)
+>>> list(zipped)
+[(1, 'a'), (2, 'b'), (3, 'c')]
 ```
 
 ### Day 13: Point of Incidence
