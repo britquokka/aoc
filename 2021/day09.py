@@ -1,3 +1,4 @@
+import collections
 import logging
 import os
 import time
@@ -16,11 +17,11 @@ class Floor:
 
     def __init__(self, heightmap):
         self.heightmap = heightmap
-        self.max_x = len(self.heightmap)
-        self.max_y = len(self.heightmap[0])
+        self.max_x = len(self.heightmap) - 1
+        self.max_y = len(self.heightmap[0]) - 1
 
     def is_inside_map(self, p: Point):
-        return True if (0 <= p.x < self.max_x) and (0 <= p.y < self.max_y) else False
+        return True if (0 <= p.x <= self.max_x) and (0 <= p.y <= self.max_y) else False
 
     def build_neighbours(self, p: Point):
         all_neighbours = [Point(p.x - 1, p.y), Point(p.x, p.y - 1), Point(p.x, p.y + 1), Point(p.x + 1, p.y)]
@@ -38,23 +39,23 @@ class Floor:
     def bfs(self, start: Point, height_limit=9):
         if self.get_height(start) == height_limit:
             return [], [start]
-        visited, queue, basin = [], [], []
-        visited.append(start)
-        queue.append(start)
+        visited, fifo, basin = set(), collections.deque(), []
+        visited.add(start)
+        fifo.append(start)
         basin.append(start)
-        while queue:
-            current = queue.pop(0)
+        while fifo:
+            current = fifo.popleft()
             for neighbour in self.build_neighbours(current):
                 if neighbour not in visited:
-                    visited.append(neighbour)
+                    visited.add(neighbour)
                     if self.get_height(neighbour) < height_limit:
-                        queue.append(neighbour)
+                        fifo.append(neighbour)
                         basin.append(neighbour)
         return basin, visited
 
     def all_points(self):
-        for x in range(self.max_x):
-            for y in range(self.max_y):
+        for x in range(self.max_x+1):
+            for y in range(self.max_y+1):
                 p = Point(x, y)
                 yield p
 
@@ -81,7 +82,7 @@ class Puzzle:
         heightmap = []
         with open(file) as f:
             for line in f:
-                row = list(map(lambda y: int(y), line.strip()))
+                row = list(map(lambda c: int(c), line.strip()))
                 heightmap.append(row)
         return heightmap
 
