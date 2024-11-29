@@ -75,5 +75,10 @@ class BiggerCave(Cave):
         Cave.__init__(self, risk_level_map,  self.orig_len_x*bigger_coefficient, self.orig_len_y * bigger_coefficient)
 ```
 
+### Day 10: Syntax Scoring
+
+collections.deque() practical work
+
+
 [aoc-about]:   https://adventofcode.com/2021/about
 [Dijkstra]: https://builtin.com/software-engineering-perspectives/dijkstras-algorithm
