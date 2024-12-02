@@ -47,11 +47,7 @@ class Puzzle:
 
         # try to remove level one by one and check report is safe
         if not is_safe:
-            for idx in range(len(report)):
-                candidate_report = report[:idx] + report[idx + 1:]
-                is_safe = puzzle.is_safe(candidate_report)
-                if is_safe:
-                    break
+            is_safe = any(Puzzle.is_safe(report[:idx] + report[idx + 1:]) for idx in range(len(report)))
 
         return is_safe
 

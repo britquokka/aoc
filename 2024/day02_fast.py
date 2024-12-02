@@ -65,11 +65,8 @@ class Puzzle:
 
         if not is_safe:
             # retry by removing current and prev level where error was detected
-            for idx in range(idx_error-1, idx_error+1, 1):
-                candidate_report = report[:idx] + report[idx+1:]
-                is_safe = puzzle.is_safe(candidate_report)
-                if is_safe:
-                    break
+            is_safe = any(Puzzle.is_safe(report[:idx] + report[idx + 1:]) for idx in range(idx_error-1, idx_error+1, 1))
+
             # special case when first level is bad
             if not is_safe and idx_error == 2:
                 candidate_report = report[1:]
