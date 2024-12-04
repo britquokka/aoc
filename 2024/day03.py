@@ -2,12 +2,9 @@ import logging
 import os
 import time
 from TestUtils import TestUtils
-from collections import namedtuple
 import re
 
 logger = logging.getLogger(__name__)
-
-Instruction = namedtuple('Instruction', ['name', 'operands'])
 
 
 class Puzzle:
