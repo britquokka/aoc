@@ -20,5 +20,12 @@ zip and slicing practical work.
 The fast (x4) implementation avoid to do a lot of useless iterations to find the bad level.
 The drawback of the fast implementation is the amount of code.
 
+### Day 3: Mull It Over
+
+RegEx practical work. 
+
+### Day 4: Ceres Search 
+
+List comprehension practical work
 
 [aoc-about]:   https://adventofcode.com/2024/about
