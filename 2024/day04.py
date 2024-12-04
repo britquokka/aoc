@@ -90,7 +90,7 @@ if __name__ == '__main__':
     result = TestUtils.check_result_no_arg("part1", 18,
                                            puzzle.count_xmas)
     print("part 1: execution time is ", time.time() - t0, " s")
-    print("part 1: The number of times XMAS appear is", result)
+    print("part 1:  The number of times XMAS appear is", result)
 
     print("-----------------")
     input_file = INPUT_FILE
