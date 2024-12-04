@@ -71,15 +71,15 @@ if __name__ == '__main__':
     print("part 1: execution time is ", time.time() - t0, " s")
     print("part 1: The sum of the multiplications is", result)
 
-    # print("-----------------")
-    # input_file = INPUT_FILE_EXAMPLE_PART2
-    # print("part 2: input file is ", input_file)
-    # t0 = time.time()
-    # puzzle = Puzzle(input_file)
-    # result = TestUtils.check_result_no_arg("part2", 48,
-    #                                        puzzle.run_program_part2)
-    # print("part 2: execution time is ", time.time() - t0, " s")
-    # print("part 2: The sum of the multiplications is", result)
+    print("-----------------")
+    input_file = INPUT_FILE_EXAMPLE_PART2
+    print("part 2: input file is ", input_file)
+    t0 = time.time()
+    puzzle = Puzzle(input_file)
+    result = TestUtils.check_result_no_arg("part2", 48,
+                                           puzzle.run_program_part2)
+    print("part 2: execution time is ", time.time() - t0, " s")
+    print("part 2: the sum of the multiplications is", result)
 
     print("-----------------")
     input_file = INPUT_FILE
