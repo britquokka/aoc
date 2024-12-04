@@ -24,8 +24,25 @@ The drawback of the fast implementation is the amount of code.
 
 RegEx practical work. 
 
+I try for the first time a "match Statement".
+A match statement takes an expression and compares its value to successive patterns given as one or more case blocks. This is superficially similar to a switch statement in C, Java or JavaScript (and many other languages),
+
+```
+def http_error(status):
+    match status:
+        case 400:
+            return "Bad request"
+        case 404:
+            return "Not found"
+        case 418:
+            return "I'm a teapot"
+        case _:
+            return "Something's wrong with the internet"
+```
+
 ### Day 4: Ceres Search 
 
 List comprehension practical work
+
 
 [aoc-about]:   https://adventofcode.com/2024/about
