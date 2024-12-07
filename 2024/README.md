@@ -44,5 +44,7 @@ def http_error(status):
 
 List comprehension practical work
 
+### Day 6: Guard Gallivant 
+
 
 [aoc-about]:   https://adventofcode.com/2024/about
