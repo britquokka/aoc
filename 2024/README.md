@@ -49,4 +49,8 @@ List comprehension practical work
 Part2 in day06_fast.py implementation is x4 faster. 
 It uses at each test a part of the previous computed path to avoid to redo the same thing several time 
 
+### Day 10: Hoof It
+
+Depth-first search (DFS) practical work
+
 [aoc-about]:   https://adventofcode.com/2024/about
