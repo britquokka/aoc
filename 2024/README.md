@@ -53,4 +53,11 @@ It uses at each test a part of the previous computed path to avoid to redo the s
 
 Depth-first search (DFS) practical work
 
+### Day 14: Restroom Redoubt
+
+part 1 only is solved.
+In part 2, we need to find a christmas tree which is drawn by robots positions in a area at a specific time
+but i don't know how to solve that. Try to find the map with the more adjacent robots  ?  
+
+
 [aoc-about]:   https://adventofcode.com/2024/about

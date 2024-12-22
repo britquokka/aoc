@@ -43,20 +43,21 @@ class Puzzle:
     def dfs(self, start):
         score = 0
         lifo = collections.deque([start])
-        visited = set()
+        visited = set(start)
         while lifo:
             r, c = position = lifo.pop()
-            visited.add(position)
             if self.grid[r][c] == 9:
                 score += 1
             for neighbour in self.build_neighbours(position):
                 if neighbour not in visited:
                     lifo.append(neighbour)
+                    visited.add(neighbour)
         return score
 
     def dfs_part2(self, start):
         score = 0
         lifo = collections.deque([start])
+        # don't need visited set because we want all path
         while lifo:
             r, c = position = lifo.pop()
             if self.grid[r][c] == 9:
@@ -103,20 +104,20 @@ if __name__ == '__main__':
 
     print("-----------------")
     input_file = INPUT_FILE_EXAMPLE
-    print("part 1: input file is ", input_file)
+    print("part 2: input file is ", input_file)
     t0 = time.time()
     puzzle = Puzzle(input_file)
     result = TestUtils.check_result_no_arg("part1", 81,
                                            puzzle.find_all_distinct_trailheads)
-    print("part 1: execution time is ", time.time() - t0, " s")
-    print("part 1: The sum of the score of all trailheads is", result)
+    print("part 2: execution time is ", time.time() - t0, " s")
+    print("part 2: The sum of the score of all trailheads is", result)
 
     print("-----------------")
     input_file = INPUT_FILE
-    print("part 1: input file is ", input_file)
+    print("part 2: input file is ", input_file)
     t0 = time.time()
     puzzle = Puzzle(input_file)
     result = TestUtils.check_result_no_arg("part1", 1794,
                                            puzzle.find_all_distinct_trailheads)
-    print("part 1: execution time is ", time.time() - t0, " s")
-    print("part 1: The sum of the score of all trailheads is", result)
+    print("part 2: execution time is ", time.time() - t0, " s")
+    print("part 2: The sum of the score of all trailheads is", result)
