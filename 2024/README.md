@@ -56,8 +56,14 @@ Depth-first search (DFS) practical work
 ### Day 14: Restroom Redoubt
 
 part 1 only is solved.
-In part 2, we need to find a christmas tree which is drawn by robots positions in a area at a specific time
-but i don't know how to solve that. Try to find the map with the more adjacent robots  ?  
+In part 2, we need to find a Christmas tree which is drawn by robots positions in area at a specific time
+but I don't know how to solve that. Try to find the map with the more adjacent robots  ?  
+
+
+### Day 18: RAM Run
+
+BFS (Breadth First Search) practical works
+
 
 
 [aoc-about]:   https://adventofcode.com/2024/about
