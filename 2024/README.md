@@ -64,6 +64,10 @@ but I don't know how to solve that. Try to find the map with the more adjacent r
 
 BFS (Breadth First Search) practical works
 
+### Day 12: Garden Groups
+
+BFS too
+
 
 
 [aoc-about]:   https://adventofcode.com/2024/about
