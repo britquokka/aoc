@@ -68,6 +68,13 @@ BFS (Breadth First Search) practical works
 
 BFS too
 
+### Day 16: Reindeer Maze
+
+Another [Dijkstra][Dijkstra] to find the path with the lowest score. 
+For the part2, we need to find all the path with the lowest score.
+
+
 
 
 [aoc-about]:   https://adventofcode.com/2024/about
+[Dijkstra]: https://builtin.com/software-engineering-perspectives/dijkstras-algorithm
