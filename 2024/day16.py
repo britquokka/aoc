@@ -34,10 +34,6 @@ class Maze:
             for c in range(self.nb_columns):
                 yield r, c
 
-    def is_inside_map(self, tile):
-        y, x = tile
-        return True if (0 <= y < self.nb_rows) and (0 <= x < self.nb_columns) else False
-
     def build_neighbours(self, node):
         neighbours = []
         (y0, x0), direction = node
@@ -45,7 +41,7 @@ class Maze:
             next_direction = Direction((direction + next_dir) % 4)
             dy, dx = Maze.delta_by_dir[next_direction]
             next_tile = (y, x) = (y0 + dy, x0 + dx)
-            if self.is_inside_map(next_tile) and self.grid[y][x] != '#':
+            if self.grid[y][x] != '#':
                 neigh = (next_tile, next_direction)
                 neighbours.append(neigh)
         return neighbours

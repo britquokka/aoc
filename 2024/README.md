@@ -73,6 +73,9 @@ BFS too
 Another [Dijkstra][Dijkstra] to find the path with the lowest score. 
 For the part2, we need to find all the path with the lowest score.
 
+### Day 20: Race Condition
+
+Another DFS to find race path.
 
 
 
