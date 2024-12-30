@@ -53,14 +53,14 @@ class TrackMap:
                     neighbours.append(((y0+dy, x0+dx), ctime))
         return neighbours
 
-    def find_cheats(self, time_by_tile: dict, max_cheat_time):
+    def find_cheats(self, path: set, max_cheat_time):
         cheats = []
         visited = set()
-        for start_tile in time_by_tile.keys():
+        for start_tile in path:
             neighbours = self.build_cheated_neighbours(start_tile, max_cheat_time)
             visited.add(start_tile)
             for end_tile, ctime in neighbours:
-                if end_tile in time_by_tile.keys() and end_tile not in visited:
+                if end_tile in path and end_tile not in visited:
                     cheats.append(Cheats(start_tile, end_tile, ctime))
         return cheats
 
@@ -79,7 +79,7 @@ class Puzzle:
     def find_nb_cheats(self, parameters):
         min_save_time, max_cheat_time = parameters
         time_by_tile = self.trackMap.dfs()
-        cheats = self.trackMap.find_cheats(time_by_tile, max_cheat_time)
+        cheats = self.trackMap.find_cheats(set(time_by_tile.keys()), max_cheat_time)
         save_times = [abs(time_by_tile[c.start] - time_by_tile[c.end]) - c.time for c in cheats]
         nb_cheats = sum([True for st in save_times if st >= min_save_time])
         return nb_cheats
