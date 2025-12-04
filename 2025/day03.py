@@ -40,12 +40,14 @@ class Puzzle:
     def find_high_joltage_in_bank_p2(bank):
         nb_batteries_on = 12
         digits = [0] * nb_batteries_on
-        nb_batteries = len(bank)
+        nb_batteries = nb_b_available = len(bank)
         for idx_b, b_joltage in enumerate(bank):
+            nb_b_available -= 1
+            nb_digit_to_fill = len(digits)
             for idx_digit, digit in enumerate(digits):
                 # check if this battery joltage is higher than prev or go to next digit
-                idx_limit = nb_batteries - (nb_batteries_on - 1 - idx_digit)
-                if (b_joltage > digit) & (idx_b < idx_limit):
+                nb_digit_to_fill -= 1
+                if (b_joltage > digit) & (nb_digit_to_fill <= nb_b_available):
                     digits[idx_digit] = b_joltage
                     # new high joltage is found , raz next digits
                     raz_idx_begin = idx_digit + 1
