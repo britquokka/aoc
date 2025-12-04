@@ -22,6 +22,7 @@ class HelpfulDiagram:
         x, y = p
         return True if (0 <= x < self.nb_columns) and (0 <= y < self.nb_rows) else False
 
+
     def get_adjacent_rolls(self, p):
         (y0, x0) = p
         all_neighbours = [(y0 - 1, x0), (y0, x0 + 1), (y0 + 1, x0), (y0, x0 - 1)]
