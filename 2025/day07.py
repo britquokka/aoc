@@ -27,12 +27,16 @@ class TachyonManifold:
         while self.is_inside_grid((y, x)):
             if self.grid[y][x] == '^':
                 if (y, x) not in seen:
+                    # two new beams are emitted from the splitter
                     seen.add((y, x))
                     return 1 + self.emit_beam((y, x+1), seen) + self.emit_beam((y, x-1), seen)
                 else:
+                    # splitter is already in the count
                     return 0
             else:
+                # move downward
                 y += 1
+        # exit from grid
         return 0
 
     def emit_beam_until_exit(self, start, nb_paths_by_splitter):
@@ -40,14 +44,19 @@ class TachyonManifold:
         while self.is_inside_grid((y, x)):
             if self.grid[y][x] == '^':
                 if (y, x) in nb_paths_by_splitter.keys():
+                    # already in cache so use cache
                     return nb_paths_by_splitter[(y, x)]
                 else:
+                    # two new beams are emitted from the splitter
                     nb_paths = (self.emit_beam_until_exit((y, x + 1), nb_paths_by_splitter)
                                 + self.emit_beam_until_exit((y, x - 1), nb_paths_by_splitter))
+                    # cache results
                     nb_paths_by_splitter[(y, x)] = nb_paths
                     return nb_paths
             else:
+                # move downward
                 y += 1
+        # find exit
         return 1
 
     def find_start(self):
